@@ -1,3 +1,4 @@
+from typing import Optional
 from fastapi import APIRouter, Body
 from pydantic import BaseModel
 from app.services.embedding import embed_chunks
@@ -9,9 +10,9 @@ router = APIRouter(prefix="/query", tags=["query"])
 
 class QueryRequest(BaseModel):
     question: str
-    top_k: int = 5
+    top_k: Optional[int] = None  # make optional
 
-@router.post("/query")
+@router.post("")
 async def query_docs(request: QueryRequest):
     client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
     try:
@@ -19,9 +20,11 @@ async def query_docs(request: QueryRequest):
         question_embedding = embed_chunks([request.question])[0]
 
         # 2. Search Chroma for similar chunks
+        all_results = collection.count()  # total number of embeddings in the collection
+
         results = collection.query(
             query_embeddings=[question_embedding],
-            n_results=request.top_k
+            n_results=request.top_k or all_results  # fetch all if top_k is None
         )
 
         # 3. Get matched documents
