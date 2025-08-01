@@ -12,7 +12,7 @@ class QueryRequest(BaseModel):
     question: str
     top_k: Optional[int] = None  # make optional
 
-@router.post("/query")
+@router.post("")
 async def query_docs(request: QueryRequest):
     client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
     try:
