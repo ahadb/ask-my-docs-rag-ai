@@ -1,0 +1,77 @@
+[
+  {
+    "name": "Bald Eagle",
+    "description": "The Bald Eagle is a bird of prey found in North America. It is the national bird and symbol of the United States. With its distinctive white head and powerful yellow beak, it soars gracefully over lakes and rivers.",
+    "habitat": "Near large bodies of open water with abundant food supply and old-growth trees for"
+  },
+  {
+    "name": "nesting.",
+    "description": "Peregrine Falcon Known for being the fastest animal on Earth, the Peregrine Falcon can reach speeds of over 240 mph during its hunting stoop (high-speed dive).",
+    "habitat": "Widespread globally, prefers open landscapes with cliffs or tall buildings for ."
+  },
+  {
+    "name": "Great Horned Owl",
+    "description": "This powerful nocturnal predator has distinctive tufts on its head and a deep hooting voice. It feeds on mammals, birds, and reptiles.",
+    "habitat": "Forests, deserts, and urban areas throughout the Americas."
+  },
+  {
+    "name": "American Robin",
+    "description": "A familiar sight on lawns, the American Robin has a red breast and a cheerful song. It's often considered a harbinger of spring.",
+    "habitat": "Woodlands, gardens, parks, and urban areas."
+  },
+  {
+    "name": "Blue Jay",
+    "description": "The Blue Jay is intelligent and noisy, known for its vivid blue plumage and strong family bonds. It mimics the calls of hawks.",
+    "habitat": "Forests, especially near oak trees; also suburban areas."
+  },
+  {
+    "name": "Hummingbird",
+    "description": "Tiny and colorful, hummingbirds can hover in mid-air by rapidly flapping their wings. They feed on nectar and are vital pollinators.",
+    "habitat": "From Alaska to Tierra del Fuego; commonly in gardens and tropical forests."
+  },
+  {
+    "name": "Cardinal",
+    "description": "The male Northern Cardinal is a brilliant red with a distinctive crest and a clear whistling song. Females are brownish with red tinges.",
+    "habitat": "Woodlands, gardens, shrublands, and wetlands."
+  },
+  {
+    "name": "Snowy Owl",
+    "description": "This large, white owl breeds in the Arctic tundra and is well adapted to cold climates. It hunts during the day and can travel far south in winter.",
+    "habitat": "Arctic tundra; open fields during winter migration."
+  },
+  {
+    "name": "Flamingo",
+    "description": "Famous for their pink coloration and long legs, flamingos feed on algae and crustaceans. Their color comes from carotenoid pigments in their diet.",
+    "habitat": "Lakes, lagoons, and mudflats in tropical and subtropical regions."
+  },
+  {
+    "name": "Peacock",
+    "description": "The male peacock is renowned for its extravagant tail feathers, used in courtship displays. These iridescent feathers form a spectacular fan.",
+    "habitat": "Native to India and Sri Lanka; found in forests and near villages."
+  },
+  {
+    "name": "Albatross",
+    "description": "One of the largest flying birds, albatrosses can glide for hours without flapping. They are symbols of endurance and freedom.",
+    "habitat": "Open oceans, coming to shore only to breed on remote islands."
+  },
+  {
+    "name": "Woodpecker",
+    "description": "With a strong beak and reinforced skull, woodpeckers drill into trees to find insects or create nest cavities.",
+    "habitat": "Forests, woodlands, and occasionally in urban areas with trees."
+  },
+  {
+    "name": "Penguin",
+    "description": "Flightless and well-insulated, penguins are expert swimmers. They use their flippers to 'fly' through the water.",
+    "habitat": "Southern Hemisphere, especially Antarctica and sub-Antarctic islands."
+  },
+  {
+    "name": "Toucan",
+    "description": "With a brightly colored, oversized beak, the toucan is a fruit-eating bird of the rainforest. Its bill helps regulate heat.",
+    "habitat": "Tropical and subtropical rainforests of Central and South America."
+  },
+  {
+    "name": "Kingfisher",
+    "description": "Kingfishers are small to medium-sized birds with large heads and long bills. They dive into water to catch fish and are brilliantly colored.",
+    "habitat": "Near rivers, lakes, and coastal regions worldwide."
+  }
+]

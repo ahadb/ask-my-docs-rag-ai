@@ -1,3 +1,5 @@
+import json
+import os
 from fastapi import APIRouter, UploadFile, File, HTTPException
 from app.services.parsing import parse_file, parse_raw_bird_text, birds_list_to_string
 from app.services import chunking
@@ -30,6 +32,13 @@ async def upload_file(file: UploadFile = File(...)):
             raise HTTPException(status_code=400, detail="No text found in the file")
         
         cleaned_text_str = birds_list_to_string(cleaned_text_list)
+        # Write cleaned text list to JSON file
+        output_dir = "data"
+        os.makedirs(output_dir, exist_ok=True)
+        
+        output_file = os.path.join(output_dir, "birds.json")
+        with open(output_file, "w") as f:
+            json.dump(cleaned_text_list, f, indent=2)
         
         # 2. chunk the text
         chunks = chunking.chunk_text(cleaned_text_str, chunk_size=500, overlap=50)

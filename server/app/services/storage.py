@@ -14,7 +14,14 @@ def store_embeddings(chunks: List[str], embeddings: List[List[float]], metadata_
     """
     Store text chunks and their embeddings with metadata into ChromaDB.
     """
-    ids = [f"chunk-{i}" for i in range(len(chunks))]  # unique IDs for each chunk
+    # Generate unique IDs based on filename and chunk index
+    ids = []
+    for i, metadata in enumerate(metadata_list):
+        filename = metadata.get('filename', 'unknown')
+        # Clean filename for use as ID (remove special characters)
+        clean_filename = "".join(c for c in filename if c.isalnum() or c in ('-', '_')).rstrip()
+        chunk_id = f"{clean_filename}_chunk_{i}"
+        ids.append(chunk_id)
     
 
     collection.add(

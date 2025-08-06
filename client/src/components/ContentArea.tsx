@@ -33,6 +33,57 @@ export default function ContentArea() {
       status: "pending" | "completed" | "error";
     }>;
   }>({});
+  // Chat states
+  const [messages, setMessages] = useState<
+    Array<{
+      id: string;
+      type: "user" | "assistant";
+      content: string;
+      timestamp: Date;
+      sources?: Array<any>;
+    }>
+  >([]);
+  const [inputValue, setInputValue] = useState("");
+  const [isQuerying, setIsQuerying] = useState(false);
+
+  // Typewriter effect state
+  const [typingStates, setTypingStates] = useState<{
+    [key: string]: { text: string; isTyping: boolean };
+  }>({});
+
+  // Typewriter effect function
+  const startTyping = useCallback(
+    (messageId: string, fullText: string, speed: number = 30) => {
+      setTypingStates((prev) => ({
+        ...prev,
+        [messageId]: { text: "", isTyping: true },
+      }));
+
+      let index = 0;
+      const timer = setInterval(() => {
+        setTypingStates((prev) => {
+          if (index < fullText.length) {
+            return {
+              ...prev,
+              [messageId]: {
+                text: fullText.slice(0, index + 1),
+                isTyping: true,
+              },
+            };
+          } else {
+            clearInterval(timer);
+            return {
+              ...prev,
+              [messageId]: { text: fullText, isTyping: false },
+            };
+          }
+        });
+        index++;
+      }, speed);
+    },
+    []
+  );
+
   const containerRef = useRef<HTMLDivElement>(null);
   const lastUpdateRef = useRef(0);
 
@@ -189,14 +240,118 @@ export default function ContentArea() {
     setUploadedFiles((prev) => prev.filter((_, i) => i !== index));
   }, []);
 
-  const clearAllData = useCallback(() => {
-    setUploadedFiles([]);
-    setUploadProgress({});
-    setUploadTimestamps({});
-    setChunksCreated(0);
-    setChunkPreviews({});
-    setProcessingSteps({});
+  const clearAllData = useCallback(async () => {
+    try {
+      const response = await fetch("http://localhost:8000/upload/clear", {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to clear backend data");
+      }
+
+      setUploadedFiles([]);
+      setUploadProgress({});
+      setUploadTimestamps({});
+      setChunksCreated(0);
+      setChunkPreviews({});
+      setProcessingSteps({});
+      setMessages([]);
+    } catch (error) {
+      console.error("Error clearing data:", error);
+      setUploadedFiles([]);
+      setUploadProgress({});
+      setUploadTimestamps({});
+      setChunksCreated(0);
+      setChunkPreviews({});
+      setProcessingSteps({});
+      setMessages([]);
+    }
   }, []);
+
+  // Chat functions
+  const sendQuery = useCallback(async (question: string) => {
+    if (!question.trim()) return;
+
+    const userMessage = {
+      id: Date.now().toString(),
+      type: "user" as const,
+      content: question,
+      timestamp: new Date(),
+    };
+
+    setMessages((prev) => [...prev, userMessage]);
+    setInputValue("");
+    setIsQuerying(true);
+
+    try {
+      const response = await fetch("http://localhost:8000/query", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          question: question,
+          top_k: null,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Query failed: ${response.statusText}`);
+      }
+
+      const result = await response.json();
+
+      const assistantMessage = {
+        id: (Date.now() + 1).toString(),
+        type: "assistant" as const,
+        content:
+          result.answer || "Sorry, I couldn't find an answer to your question.",
+        timestamp: new Date(),
+        sources: result.sources || [],
+      };
+
+      setMessages((prev) => [...prev, assistantMessage]);
+
+      // Start typewriter effect for the new assistant message
+      setTimeout(() => {
+        startTyping(assistantMessage.id, assistantMessage.content, 30);
+      }, 100);
+    } catch (error) {
+      console.error("Query error:", error);
+      const errorMessage = {
+        id: (Date.now() + 1).toString(),
+        type: "assistant" as const,
+        content:
+          "Sorry, I encountered an error while processing your question. Please try again.",
+        timestamp: new Date(),
+      };
+      setMessages((prev) => [...prev, errorMessage]);
+
+      // Start typewriter effect for the error message
+      setTimeout(() => {
+        startTyping(errorMessage.id, errorMessage.content, 30);
+      }, 100);
+    } finally {
+      setIsQuerying(false);
+    }
+  }, []);
+
+  const handleSendMessage = useCallback(() => {
+    if (inputValue.trim() && !isQuerying) {
+      sendQuery(inputValue);
+    }
+  }, [inputValue, isQuerying, sendQuery]);
+
+  const handleKeyPress = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        handleSendMessage();
+      }
+    },
+    [handleSendMessage]
+  );
 
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
     setIsResizing(true);
@@ -616,18 +771,96 @@ export default function ContentArea() {
         {/* Chat Messages Area */}
         <div className="flex-1 p-6 overflow-y-auto">
           <div className="space-y-4">
-            {/* Welcome Message */}
-            <div className="flex items-start space-x-3">
-              <div className="w-8 h-8 bg-indigo-500 rounded-full flex items-center justify-center">
-                <span className="text-white text-sm font-medium">AI</span>
+            {messages.length === 0 ? (
+              /* Welcome Message */
+              <div className="flex items-start space-x-3">
+                <div className="w-8 h-8 bg-indigo-500 rounded-full flex items-center justify-center">
+                  <span className="text-white text-sm font-medium">AI</span>
+                </div>
+                <div className="bg-gray-100 rounded-lg p-3 max-w-xs">
+                  <p className="text-sm text-gray-900">
+                    Hello! I'm here to help you with your documents. Upload some
+                    files on the left and then ask me questions about them.
+                  </p>
+                </div>
               </div>
-              <div className="bg-gray-100 rounded-lg p-3 max-w-xs">
-                <p className="text-sm text-gray-900">
-                  Hello! I'm here to help you with your documents. Upload some
-                  files on the left and then ask me questions about them.
-                </p>
+            ) : (
+              /* Chat Messages */
+              messages.map((message) => (
+                <div
+                  key={message.id}
+                  className={`flex items-start space-x-3 ${
+                    message.type === "user"
+                      ? "flex-row-reverse space-x-reverse"
+                      : ""
+                  }`}
+                >
+                  <div
+                    className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                      message.type === "user"
+                        ? "bg-indigo-600"
+                        : "bg-indigo-500"
+                    }`}
+                  >
+                    <span className="text-white text-sm font-medium">
+                      {message.type === "user" ? "You" : "AI"}
+                    </span>
+                  </div>
+                  <div
+                    className={`rounded-lg p-3 max-w-xs ${
+                      message.type === "user"
+                        ? "bg-indigo-600 text-white"
+                        : "bg-gray-100 text-gray-900"
+                    }`}
+                  >
+                    <p className="text-sm">
+                      {message.type === "assistant"
+                        ? typingStates[message.id]?.text || message.content
+                        : message.content}
+                      {message.type === "assistant" &&
+                        typingStates[message.id]?.isTyping && (
+                          <span className="inline-block w-0.5 h-4 bg-gray-500 ml-1 animate-pulse"></span>
+                        )}
+                    </p>
+                    {message.sources &&
+                      message.sources.length > 0 &&
+                      !typingStates[message.id]?.isTyping && (
+                        <div className="mt-2 pt-2 border-t border-gray-200">
+                          <p className="text-xs text-gray-500 mb-1">Sources:</p>
+                          {message.sources.map((source, index) => (
+                            <p key={index} className="text-xs text-gray-500">
+                              {source.file_name} (chunk {source.chunk_index + 1}
+                              )
+                            </p>
+                          ))}
+                        </div>
+                      )}
+                  </div>
+                </div>
+              ))
+            )}
+
+            {/* Loading indicator */}
+            {isQuerying && (
+              <div className="flex items-start space-x-3">
+                <div className="w-8 h-8 bg-indigo-500 rounded-full flex items-center justify-center">
+                  <span className="text-white text-sm font-medium">AI</span>
+                </div>
+                <div className="bg-gray-100 rounded-lg p-3">
+                  <div className="flex space-x-1">
+                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                    <div
+                      className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+                      style={{ animationDelay: "0.1s" }}
+                    ></div>
+                    <div
+                      className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+                      style={{ animationDelay: "0.2s" }}
+                    ></div>
+                  </div>
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
 
@@ -636,11 +869,19 @@ export default function ContentArea() {
           <div className="flex space-x-3">
             <input
               type="text"
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              onKeyPress={handleKeyPress}
               placeholder="Ask a question about your documents..."
-              className="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+              disabled={isQuerying}
+              className="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
             />
-            <button className="bg-indigo-500 text-white px-4 py-2 rounded-lg hover:bg-indigo-600 transition-colors">
-              Send
+            <button
+              onClick={handleSendMessage}
+              disabled={!inputValue.trim() || isQuerying}
+              className="bg-indigo-500 text-white px-4 py-2 rounded-lg hover:bg-indigo-600 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
+            >
+              {isQuerying ? "Sending..." : "Send"}
             </button>
           </div>
         </div>
