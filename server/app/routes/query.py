@@ -1,3 +1,4 @@
+import json
 from typing import Optional
 from fastapi import APIRouter, Body
 from pydantic import BaseModel
@@ -22,10 +23,14 @@ async def query_docs(request: QueryRequest):
         # 2. Search Chroma for similar chunks
         all_results = collection.count()  # total number of embeddings in the collection
 
+        print('COLLECTION SIZE: ', all_results)
+
         results = collection.query(
             query_embeddings=[question_embedding],
             n_results=request.top_k or all_results  # fetch all if top_k is None
         )
+
+        print('RESULTS: ', json.dumps(results, indent=4))
 
         # 3. Get matched documents
         retrieved_chunks = results['documents'][0]

@@ -1,3 +1,5 @@
+import json
+import os
 from fastapi import APIRouter, UploadFile, File, HTTPException
 from app.services.parsing import parse_file, parse_raw_bird_text, birds_list_to_string
 from app.services import chunking
@@ -22,7 +24,7 @@ async def upload_file(file: UploadFile = File(...)):
 
         # 1. parse the file
         text = parse_file(file)
-        processing_steps[1]["status"] = "completed"  # parsing_text completed
+        processing_steps[1]["status"] = "completed"
         
         cleaned_text_list = parse_raw_bird_text(text)
         
@@ -30,14 +32,26 @@ async def upload_file(file: UploadFile = File(...)):
             raise HTTPException(status_code=400, detail="No text found in the file")
         
         cleaned_text_str = birds_list_to_string(cleaned_text_list)
+      
+        # Create output directory if it doesn't exist
+        os.makedirs("output", exist_ok=True)
+        
+        # Create unique filename based on uploaded file
+        json_filename = os.path.join("output", f"{file.filename.rsplit('.', 1)[0]}.json")
+        
+        # Write the cleaned text to JSON file
+        with open(json_filename, "w", encoding="utf-8") as f:
+            json.dump({"text": cleaned_text_str}, f, indent=2, ensure_ascii=False)
         
         # 2. chunk the text
         chunks = chunking.chunk_text(cleaned_text_str, chunk_size=500, overlap=50)
-        processing_steps[2]["status"] = "completed"  # creating_chunks completed
+        processing_steps[2]["status"] = "completed"
         
         # 3. embed the chunks
         embeddings = embedding.embed_chunks(chunks)
-        processing_steps[3]["status"] = "completed"  # generating_embeddings completed
+        processing_steps[3]["status"] = "completed"
+
+        print('EMBEDDINGS: ', json.dumps(embeddings, indent=4))
         
         if not embeddings:
             return {"error": "Failed to generate embeddings"}
@@ -53,11 +67,11 @@ async def upload_file(file: UploadFile = File(...)):
 
         # 5. Store in vector DB (Chroma)
         storage.store_embeddings(chunks, embeddings, metadata_list)
-        processing_steps[4]["status"] = "completed"  # storing_in_vector_db completed
+        processing_steps[4]["status"] = "completed"
 
         # Create chunk previews (first 2 chunks with truncated text)
         chunk_previews = []
-        for i, chunk in enumerate(chunks[:2]):  # Show first 2 chunks
+        for i, chunk in enumerate(chunks[:2]):
             preview_text = chunk[:150] + "..." if len(chunk) > 150 else chunk
             chunk_previews.append({
                 "index": i,
@@ -72,5 +86,16 @@ async def upload_file(file: UploadFile = File(...)):
             "embedding_preview": embeddings[0][:5] if embeddings else [],
             "processing_steps": processing_steps
         }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.delete("/clear")
+async def clear_all_data():
+    """
+    Clear all data from the vector database.
+    """
+    try:
+        storage.clear_collection()
+        return {"message": "All data cleared successfully"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

@@ -14,8 +14,6 @@ def embed_chunks(chunks: List[str]) -> List[List[float]]:
     if not chunks:
         return []
 
-    print("Embedding chunks...")
-
     try:
         response = client.embeddings.create(
             input=chunks,
@@ -26,5 +24,4 @@ def embed_chunks(chunks: List[str]) -> List[List[float]]:
         return [item.embedding for item in response.data]
 
     except Exception as e:
-        print(f"Embedding failed: {e}")
         return []

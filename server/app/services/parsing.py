@@ -75,7 +75,6 @@ def parse_raw_bird_text(raw_text: str):
     # Write birds to JSON file
     with open('output/birds.json', 'w') as f:
         json.dump(birds, f, indent=4)
-    print('Cleaned birds:', birds)
 
     return birds
 
