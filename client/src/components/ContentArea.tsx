@@ -186,13 +186,71 @@ export default function ContentArea() {
         setUploadTimestamps({});
         setProcessingSteps({});
 
-        // Upload each file
-        for (const file of validFiles) {
-          try {
-            await uploadFile(file);
-          } catch (error) {
-            console.error(`Failed to upload ${file.name}:`, error);
+        // Batch upload all files simultaneously
+        try {
+          if (validFiles.length === 1) {
+            // Single file - use regular upload
+            await uploadFile(validFiles[0]);
+          } else {
+            // Multiple files - use batch endpoint
+            const formData = new FormData();
+            validFiles.forEach((file) => {
+              formData.append("files", file);
+            });
+
+            const response = await fetch("http://localhost:8000/upload/batch", {
+              method: "POST",
+              body: formData,
+            });
+
+            if (!response.ok) {
+              throw new Error(`Batch upload failed: ${response.statusText}`);
+            }
+
+            const batchResult = await response.json();
+
+            // Process batch results
+            batchResult.batch_results.forEach((result: any) => {
+              if (result.error) {
+                console.error(
+                  `Failed to upload ${result.filename}:`,
+                  result.error
+                );
+              } else {
+                // Update states for successful uploads
+                setUploadProgress((prev) => ({
+                  ...prev,
+                  [result.filename]: 100,
+                }));
+
+                const timestamp = new Date().toLocaleString();
+                setUploadTimestamps((prev) => ({
+                  ...prev,
+                  [result.filename]: timestamp,
+                }));
+
+                if (result.num_chunks) {
+                  setChunksCreated((prev) => prev + result.num_chunks);
+                }
+
+                if (result.chunk_previews) {
+                  setChunkPreviews((prev) => ({
+                    ...prev,
+                    [result.filename]: result.chunk_previews,
+                  }));
+                }
+
+                if (result.processing_steps) {
+                  setProcessingSteps((prev) => ({
+                    ...prev,
+                    [result.filename]: result.processing_steps,
+                  }));
+                }
+              }
+            });
           }
+        } catch (error) {
+          console.error("Batch upload error:", error);
         }
 
         setIsUploading(false);
@@ -221,13 +279,71 @@ export default function ContentArea() {
         setUploadTimestamps({});
         setProcessingSteps({});
 
-        // Upload each file
-        for (const file of validFiles) {
-          try {
-            await uploadFile(file);
-          } catch (error) {
-            console.error(`Failed to upload ${file.name}:`, error);
+        // Batch upload all files simultaneously
+        try {
+          if (validFiles.length === 1) {
+            // Single file - use regular upload
+            await uploadFile(validFiles[0]);
+          } else {
+            // Multiple files - use batch endpoint
+            const formData = new FormData();
+            validFiles.forEach((file) => {
+              formData.append("files", file);
+            });
+
+            const response = await fetch("http://localhost:8000/upload/batch", {
+              method: "POST",
+              body: formData,
+            });
+
+            if (!response.ok) {
+              throw new Error(`Batch upload failed: ${response.statusText}`);
+            }
+
+            const batchResult = await response.json();
+
+            // Process batch results
+            batchResult.batch_results.forEach((result: any) => {
+              if (result.error) {
+                console.error(
+                  `Failed to upload ${result.filename}:`,
+                  result.error
+                );
+              } else {
+                // Update states for successful uploads
+                setUploadProgress((prev) => ({
+                  ...prev,
+                  [result.filename]: 100,
+                }));
+
+                const timestamp = new Date().toLocaleString();
+                setUploadTimestamps((prev) => ({
+                  ...prev,
+                  [result.filename]: timestamp,
+                }));
+
+                if (result.num_chunks) {
+                  setChunksCreated((prev) => prev + result.num_chunks);
+                }
+
+                if (result.chunk_previews) {
+                  setChunkPreviews((prev) => ({
+                    ...prev,
+                    [result.filename]: result.chunk_previews,
+                  }));
+                }
+
+                if (result.processing_steps) {
+                  setProcessingSteps((prev) => ({
+                    ...prev,
+                    [result.filename]: result.processing_steps,
+                  }));
+                }
+              }
+            });
           }
+        } catch (error) {
+          console.error("Batch upload error:", error);
         }
 
         setIsUploading(false);
