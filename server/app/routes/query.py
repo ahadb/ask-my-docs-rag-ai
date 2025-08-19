@@ -1,17 +1,25 @@
-import json
+from openai import OpenAI
 from typing import Optional
 from fastapi import APIRouter, Body
 from pydantic import BaseModel
 from app.services.embedding import embed_chunks
-from app.services.storage import collection
-from openai import OpenAI
+from supabase import create_client, Client
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+# Initialize Supabase client
+supabase: Client = create_client(
+    os.getenv("SUPABASE_URL"),
+    os.getenv("SUPABASE_ANON_KEY")
+)
 
 router = APIRouter(prefix="/query", tags=["query"])
 
 class QueryRequest(BaseModel):
     question: str
-    top_k: Optional[int] = None  # make optional
+    top_k: Optional[int] = None
 
 @router.post("")
 async def query_docs(request: QueryRequest):
@@ -20,21 +28,18 @@ async def query_docs(request: QueryRequest):
         # 1. Embed the question
         question_embedding = embed_chunks([request.question])[0]
 
-        # 2. Search Chroma for similar chunks
-        all_results = collection.count()  # total number of embeddings in the collection
+        # 2. Search Supabase for similar chunks using pgvector
+        results = supabase.rpc(
+            "match_chunks",
+            {
+                "query_embedding": question_embedding,
+                "match_count": request.top_k or 10
+            }
+        ).execute()
 
-        print('COLLECTION SIZE: ', all_results)
-
-        results = collection.query(
-            query_embeddings=[question_embedding],
-            n_results=request.top_k or all_results  # fetch all if top_k is None
-        )
-
-        print('RESULTS: ', json.dumps(results, indent=4))
-
-        # 3. Get matched documents
-        retrieved_chunks = results['documents'][0]
-        metadatas = results['metadatas'][0]
+        # 3. Get matched documents from Supabase response
+        retrieved_chunks = [result["content"] for result in results.data]
+        metadatas = [result["metadata"] for result in results.data]
 
         # 4. Create the context prompt
         context = "\n\n".join(retrieved_chunks)

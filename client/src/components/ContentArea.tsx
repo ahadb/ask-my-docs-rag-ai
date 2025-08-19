@@ -7,36 +7,6 @@ import {
   TrashIcon,
 } from "@heroicons/react/24/outline";
 
-// Typewriter effect component
-const TypewriterText = ({
-  text,
-  speed = 60,
-}: {
-  text: string;
-  speed?: number;
-}) => {
-  const [displayedText, setDisplayedText] = useState("");
-  const [currentIndex, setCurrentIndex] = useState(0);
-
-  useEffect(() => {
-    if (currentIndex < text.length) {
-      const timer = setTimeout(() => {
-        setDisplayedText(text.slice(0, currentIndex + 1));
-        setCurrentIndex(currentIndex + 1);
-      }, speed);
-
-      return () => clearTimeout(timer);
-    }
-  }, [currentIndex, text, speed]);
-
-  useEffect(() => {
-    setDisplayedText("");
-    setCurrentIndex(0);
-  }, [text]);
-
-  return <span>{displayedText}</span>;
-};
-
 export default function ContentArea() {
   const [isDragOver, setIsDragOver] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
@@ -63,6 +33,7 @@ export default function ContentArea() {
       status: "pending" | "completed" | "error";
     }>;
   }>({});
+  // Chat states
   const [messages, setMessages] = useState<
     Array<{
       id: string;
@@ -74,6 +45,45 @@ export default function ContentArea() {
   >([]);
   const [inputValue, setInputValue] = useState("");
   const [isQuerying, setIsQuerying] = useState(false);
+
+  // Typewriter effect state
+  const [typingStates, setTypingStates] = useState<{
+    [key: string]: { text: string; isTyping: boolean };
+  }>({});
+
+  // Typewriter effect function
+  const startTyping = useCallback(
+    (messageId: string, fullText: string, speed: number = 30) => {
+      setTypingStates((prev) => ({
+        ...prev,
+        [messageId]: { text: "", isTyping: true },
+      }));
+
+      let index = 0;
+      const timer = setInterval(() => {
+        setTypingStates((prev) => {
+          if (index < fullText.length) {
+            return {
+              ...prev,
+              [messageId]: {
+                text: fullText.slice(0, index + 1),
+                isTyping: true,
+              },
+            };
+          } else {
+            clearInterval(timer);
+            return {
+              ...prev,
+              [messageId]: { text: fullText, isTyping: false },
+            };
+          }
+        });
+        index++;
+      }, speed);
+    },
+    []
+  );
+
   const containerRef = useRef<HTMLDivElement>(null);
   const lastUpdateRef = useRef(0);
 
@@ -176,13 +186,71 @@ export default function ContentArea() {
         setUploadTimestamps({});
         setProcessingSteps({});
 
-        // Upload each file
-        for (const file of validFiles) {
-          try {
-            await uploadFile(file);
-          } catch (error) {
-            console.error(`Failed to upload ${file.name}:`, error);
+        // Batch upload all files simultaneously
+        try {
+          if (validFiles.length === 1) {
+            // Single file - use regular upload
+            await uploadFile(validFiles[0]);
+          } else {
+            // Multiple files - use batch endpoint
+            const formData = new FormData();
+            validFiles.forEach((file) => {
+              formData.append("files", file);
+            });
+
+            const response = await fetch("http://localhost:8000/upload/batch", {
+              method: "POST",
+              body: formData,
+            });
+
+            if (!response.ok) {
+              throw new Error(`Batch upload failed: ${response.statusText}`);
+            }
+
+            const batchResult = await response.json();
+
+            // Process batch results
+            batchResult.batch_results.forEach((result: any) => {
+              if (result.error) {
+                console.error(
+                  `Failed to upload ${result.filename}:`,
+                  result.error
+                );
+              } else {
+                // Update states for successful uploads
+                setUploadProgress((prev) => ({
+                  ...prev,
+                  [result.filename]: 100,
+                }));
+
+                const timestamp = new Date().toLocaleString();
+                setUploadTimestamps((prev) => ({
+                  ...prev,
+                  [result.filename]: timestamp,
+                }));
+
+                if (result.num_chunks) {
+                  setChunksCreated((prev) => prev + result.num_chunks);
+                }
+
+                if (result.chunk_previews) {
+                  setChunkPreviews((prev) => ({
+                    ...prev,
+                    [result.filename]: result.chunk_previews,
+                  }));
+                }
+
+                if (result.processing_steps) {
+                  setProcessingSteps((prev) => ({
+                    ...prev,
+                    [result.filename]: result.processing_steps,
+                  }));
+                }
+              }
+            });
           }
+        } catch (error) {
+          console.error("Batch upload error:", error);
         }
 
         setIsUploading(false);
@@ -211,13 +279,71 @@ export default function ContentArea() {
         setUploadTimestamps({});
         setProcessingSteps({});
 
-        // Upload each file
-        for (const file of validFiles) {
-          try {
-            await uploadFile(file);
-          } catch (error) {
-            console.error(`Failed to upload ${file.name}:`, error);
+        // Batch upload all files simultaneously
+        try {
+          if (validFiles.length === 1) {
+            // Single file - use regular upload
+            await uploadFile(validFiles[0]);
+          } else {
+            // Multiple files - use batch endpoint
+            const formData = new FormData();
+            validFiles.forEach((file) => {
+              formData.append("files", file);
+            });
+
+            const response = await fetch("http://localhost:8000/upload/batch", {
+              method: "POST",
+              body: formData,
+            });
+
+            if (!response.ok) {
+              throw new Error(`Batch upload failed: ${response.statusText}`);
+            }
+
+            const batchResult = await response.json();
+
+            // Process batch results
+            batchResult.batch_results.forEach((result: any) => {
+              if (result.error) {
+                console.error(
+                  `Failed to upload ${result.filename}:`,
+                  result.error
+                );
+              } else {
+                // Update states for successful uploads
+                setUploadProgress((prev) => ({
+                  ...prev,
+                  [result.filename]: 100,
+                }));
+
+                const timestamp = new Date().toLocaleString();
+                setUploadTimestamps((prev) => ({
+                  ...prev,
+                  [result.filename]: timestamp,
+                }));
+
+                if (result.num_chunks) {
+                  setChunksCreated((prev) => prev + result.num_chunks);
+                }
+
+                if (result.chunk_previews) {
+                  setChunkPreviews((prev) => ({
+                    ...prev,
+                    [result.filename]: result.chunk_previews,
+                  }));
+                }
+
+                if (result.processing_steps) {
+                  setProcessingSteps((prev) => ({
+                    ...prev,
+                    [result.filename]: result.processing_steps,
+                  }));
+                }
+              }
+            });
           }
+        } catch (error) {
+          console.error("Batch upload error:", error);
         }
 
         setIsUploading(false);
@@ -232,7 +358,6 @@ export default function ContentArea() {
 
   const clearAllData = useCallback(async () => {
     try {
-      // Clear backend data
       const response = await fetch("http://localhost:8000/upload/clear", {
         method: "DELETE",
       });
@@ -241,7 +366,6 @@ export default function ContentArea() {
         throw new Error("Failed to clear backend data");
       }
 
-      // Clear frontend state
       setUploadedFiles([]);
       setUploadProgress({});
       setUploadTimestamps({});
@@ -251,7 +375,6 @@ export default function ContentArea() {
       setMessages([]);
     } catch (error) {
       console.error("Error clearing data:", error);
-      // Still clear frontend state even if backend fails
       setUploadedFiles([]);
       setUploadProgress({});
       setUploadTimestamps({});
@@ -262,6 +385,7 @@ export default function ContentArea() {
     }
   }, []);
 
+  // Chat functions
   const sendQuery = useCallback(async (question: string) => {
     if (!question.trim()) return;
 
@@ -284,7 +408,7 @@ export default function ContentArea() {
         },
         body: JSON.stringify({
           question: question,
-          top_k: 5,
+          top_k: null,
         }),
       });
 
@@ -304,6 +428,11 @@ export default function ContentArea() {
       };
 
       setMessages((prev) => [...prev, assistantMessage]);
+
+      // Start typewriter effect for the new assistant message
+      setTimeout(() => {
+        startTyping(assistantMessage.id, assistantMessage.content, 30);
+      }, 100);
     } catch (error) {
       console.error("Query error:", error);
       const errorMessage = {
@@ -314,10 +443,31 @@ export default function ContentArea() {
         timestamp: new Date(),
       };
       setMessages((prev) => [...prev, errorMessage]);
+
+      // Start typewriter effect for the error message
+      setTimeout(() => {
+        startTyping(errorMessage.id, errorMessage.content, 30);
+      }, 100);
     } finally {
       setIsQuerying(false);
     }
   }, []);
+
+  const handleSendMessage = useCallback(() => {
+    if (inputValue.trim() && !isQuerying) {
+      sendQuery(inputValue);
+    }
+  }, [inputValue, isQuerying, sendQuery]);
+
+  const handleKeyPress = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        handleSendMessage();
+      }
+    },
+    [handleSendMessage]
+  );
 
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
     setIsResizing(true);
@@ -348,22 +498,6 @@ export default function ContentArea() {
   const handleMouseUp = useCallback(() => {
     setIsResizing(false);
   }, []);
-
-  const handleSendMessage = useCallback(() => {
-    if (inputValue.trim() && !isQuerying) {
-      sendQuery(inputValue);
-    }
-  }, [inputValue, isQuerying, sendQuery]);
-
-  const handleKeyPress = useCallback(
-    (e: React.KeyboardEvent) => {
-      if (e.key === "Enter" && !e.shiftKey) {
-        e.preventDefault();
-        handleSendMessage();
-      }
-    },
-    [handleSendMessage]
-  );
 
   useEffect(() => {
     if (isResizing) {
@@ -796,22 +930,27 @@ export default function ContentArea() {
                     }`}
                   >
                     <p className="text-sm">
-                      {message.type === "assistant" ? (
-                        <TypewriterText text={message.content} speed={20} />
-                      ) : (
-                        message.content
-                      )}
+                      {message.type === "assistant"
+                        ? typingStates[message.id]?.text || message.content
+                        : message.content}
+                      {message.type === "assistant" &&
+                        typingStates[message.id]?.isTyping && (
+                          <span className="inline-block w-0.5 h-4 bg-gray-500 ml-1 animate-pulse"></span>
+                        )}
                     </p>
-                    {message.sources && message.sources.length > 0 && (
-                      <div className="mt-2 pt-2 border-t border-gray-200">
-                        <p className="text-xs text-gray-500 mb-1">Sources:</p>
-                        {message.sources.map((source, index) => (
-                          <p key={index} className="text-xs text-gray-500">
-                            {source.file_name} (chunk {source.chunk_index + 1})
-                          </p>
-                        ))}
-                      </div>
-                    )}
+                    {message.sources &&
+                      message.sources.length > 0 &&
+                      !typingStates[message.id]?.isTyping && (
+                        <div className="mt-2 pt-2 border-t border-gray-200">
+                          <p className="text-xs text-gray-500 mb-1">Sources:</p>
+                          {message.sources.map((source, index) => (
+                            <p key={index} className="text-xs text-gray-500">
+                              {source.file_name} (chunk {source.chunk_index + 1}
+                              )
+                            </p>
+                          ))}
+                        </div>
+                      )}
                   </div>
                 </div>
               ))
