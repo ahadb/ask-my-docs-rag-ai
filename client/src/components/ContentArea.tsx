@@ -6,6 +6,7 @@ import {
   DocumentTextIcon,
   TrashIcon,
 } from "@heroicons/react/24/outline";
+import { API_URLS } from "../config";
 
 export default function ContentArea() {
   const [isDragOver, setIsDragOver] = useState(false);
@@ -108,7 +109,7 @@ export default function ContentArea() {
         [file.name]: initialSteps,
       }));
 
-      const response = await fetch("http://localhost:8000/upload", {
+      const response = await fetch(API_URLS.UPLOAD, {
         method: "POST",
         body: formData,
       });
@@ -198,7 +199,7 @@ export default function ContentArea() {
               formData.append("files", file);
             });
 
-            const response = await fetch("http://localhost:8000/upload/batch", {
+            const response = await fetch(API_URLS.UPLOAD_BATCH, {
               method: "POST",
               body: formData,
             });
@@ -291,7 +292,7 @@ export default function ContentArea() {
               formData.append("files", file);
             });
 
-            const response = await fetch("http://localhost:8000/upload/batch", {
+            const response = await fetch(API_URLS.UPLOAD_BATCH, {
               method: "POST",
               body: formData,
             });
@@ -358,7 +359,7 @@ export default function ContentArea() {
 
   const clearAllData = useCallback(async () => {
     try {
-      const response = await fetch("http://localhost:8000/upload/clear", {
+      const response = await fetch(API_URLS.UPLOAD_CLEAR, {
         method: "DELETE",
       });
 
@@ -401,7 +402,7 @@ export default function ContentArea() {
     setIsQuerying(true);
 
     try {
-      const response = await fetch("http://localhost:8000/query", {
+      const response = await fetch(API_URLS.QUERY, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

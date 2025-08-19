@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { API_URLS } from "../config";
 
 interface Settings {
   chunk_size: number;
@@ -32,7 +33,7 @@ export default function Settings() {
 
   const loadSettings = async () => {
     try {
-      const response = await fetch("http://localhost:8000/settings");
+      const response = await fetch(API_URLS.SETTINGS);
       if (response.ok) {
         const data = await response.json();
         setSettings(data);
@@ -49,7 +50,7 @@ export default function Settings() {
     setMessage("");
 
     try {
-      const response = await fetch("http://localhost:8000/settings", {
+      const response = await fetch(API_URLS.SETTINGS, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -72,7 +73,7 @@ export default function Settings() {
 
   const resetSettings = async () => {
     try {
-      const response = await fetch("http://localhost:8000/settings/reset", {
+      const response = await fetch(API_URLS.SETTINGS_RESET, {
         method: "POST",
       });
 
