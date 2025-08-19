@@ -13,6 +13,4 @@ def chunk_text(text: str, chunk_size: int = 1000, overlap: int = 50) -> list[str
         start += chunk_size - overlap
 
     return chunks
-
-print("chunking.py loaded")
     

@@ -6,8 +6,6 @@ from app.routes.settings import router as settings_router
 from dotenv import load_dotenv
 load_dotenv()
 import os
-print(f"Environment loaded: {'OPENAI_API_KEY' in os.environ}")
-print(f"API Key length: {len(os.getenv('OPENAI_API_KEY', ''))}")
 
 # This is enough for my MVP, later I might:
 # - Add Exception handling

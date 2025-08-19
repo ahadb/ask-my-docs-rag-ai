@@ -178,6 +178,7 @@ Desktop.ini
 *~
 
 # Project specific
+output/
 chroma/
 *.db
 *.sqlite
