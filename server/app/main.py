@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.routes import upload, query
+from app.routes.settings import router as settings_router
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -33,3 +34,4 @@ app.add_middleware(
 
 app.include_router(upload.router)
 app.include_router(query.router)
+app.include_router(settings_router)
