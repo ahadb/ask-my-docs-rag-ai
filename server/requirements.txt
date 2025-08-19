@@ -1,18 +1,10 @@
 fastapi==0.116.1
 uvicorn==0.35.0
 openai==1.98.0
-<<<<<<< HEAD
 chromadb==1.98.0
-=======
-chromadb==1.0.15
->>>>>>> 2784851598d10a7a5c0cfad93d1dd4b2d442238c
 PyMuPDF==1.26.3
 python-docx==1.2.0
 python-dotenv==1.1.1
 pydantic==2.11.7
-<<<<<<< HEAD
 supabase==2.18.1
 python-multipart==0.0.6
-=======
-supabase==2.18.1
->>>>>>> 2784851598d10a7a5c0cfad93d1dd4b2d442238c
