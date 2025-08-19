@@ -4,16 +4,7 @@ import {
   DialogPanel,
   TransitionChild,
 } from "@headlessui/react";
-import {
-  Bars3Icon,
-  CalendarIcon,
-  ChartPieIcon,
-  DocumentDuplicateIcon,
-  FolderIcon,
-  HomeIcon,
-  UsersIcon,
-  XMarkIcon,
-} from "@heroicons/react/24/outline";
+import { HomeIcon, XMarkIcon } from "@heroicons/react/24/outline";
 
 const navigation = [
   { name: "Dashboard", href: "dashboard", icon: HomeIcon, current: true },

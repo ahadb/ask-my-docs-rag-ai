@@ -21,7 +21,7 @@ export default function ContentArea() {
       full_length: number;
     }>;
   }>({});
-  const [isUploading, setIsUploading] = useState(false);
+
   const [uploadProgress, setUploadProgress] = useState<{
     [key: string]: number; // An object where each key is a filename (string) and the value is the upload progress (number)
   }>({});
@@ -179,7 +179,6 @@ export default function ContentArea() {
 
       if (validFiles.length > 0) {
         setUploadedFiles((prev) => [...prev, ...validFiles]);
-        setIsUploading(true);
 
         // Reset chunks count, previews, timestamps, and processing steps for new upload session
         setChunksCreated(0);
@@ -253,8 +252,6 @@ export default function ContentArea() {
         } catch (error) {
           console.error("Batch upload error:", error);
         }
-
-        setIsUploading(false);
       }
     },
     [uploadFile]
@@ -272,7 +269,6 @@ export default function ContentArea() {
 
       if (validFiles.length > 0) {
         setUploadedFiles((prev) => [...prev, ...validFiles]);
-        setIsUploading(true);
 
         // Reset chunks count, previews, timestamps, and processing steps for new upload session
         setChunksCreated(0);
@@ -346,8 +342,6 @@ export default function ContentArea() {
         } catch (error) {
           console.error("Batch upload error:", error);
         }
-
-        setIsUploading(false);
       }
     },
     [uploadFile]
