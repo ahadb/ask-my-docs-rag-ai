@@ -1,31 +1,48 @@
 import { Bars3Icon } from "@heroicons/react/24/outline";
+import { HomeIcon } from "@heroicons/react/24/outline";
 
 interface HeaderProps {
   setSidebarOpen: (open: boolean) => void;
+  onNavigateHome?: () => void;
 }
 
-export default function Header({ setSidebarOpen }: HeaderProps) {
+export default function Header({
+  setSidebarOpen,
+  onNavigateHome,
+}: HeaderProps) {
   return (
-    <div className="sticky top-0 z-40 flex items-center gap-x-6 bg-white px-4 py-4 shadow-xs sm:px-6 lg:hidden">
+    <div className="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
       <button
         type="button"
-        onClick={() => setSidebarOpen(true)}
         className="-m-2.5 p-2.5 text-gray-700 lg:hidden"
+        onClick={() => setSidebarOpen(true)}
       >
         <span className="sr-only">Open sidebar</span>
-        <Bars3Icon aria-hidden="true" className="size-6" />
+        <Bars3Icon className="h-6 w-6" aria-hidden="true" />
       </button>
-      <div className="flex-1 text-sm/6 font-semibold text-gray-900">
-        Dashboard
+
+      {/* Separator */}
+      <div className="h-6 w-px bg-gray-200 lg:hidden" aria-hidden="true" />
+
+      <div className="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
+        <div className="flex flex-1 items-center justify-between">
+          <div className="flex items-center gap-x-4">
+            {onNavigateHome && (
+              <button
+                onClick={onNavigateHome}
+                className="inline-flex items-center gap-x-2 rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 transition-colors duration-200"
+              >
+                <HomeIcon className="h-4 w-4" />
+                Home
+              </button>
+            )}
+          </div>
+
+          <div className="flex items-center gap-x-4 lg:gap-x-6">
+            {/* Add any additional header elements here */}
+          </div>
+        </div>
       </div>
-      <a href="#">
-        <span className="sr-only">Your profile</span>
-        <img
-          alt=""
-          src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-          className="size-8 rounded-full bg-gray-50"
-        />
-      </a>
     </div>
   );
 }
