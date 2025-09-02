@@ -2,6 +2,9 @@
 
 A powerful Retrieval-Augmented Generation (RAG) application that allows users to upload documents and query them using AI. Built with FastAPI, React, and Supabase for enterprise-grade scalability and performance.
 
+Sign In
+demo / SecurePass123!
+
 ## 🚀 Features
 
 - **Document Processing**: Upload PDF and DOCX files
