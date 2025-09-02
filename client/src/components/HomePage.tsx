@@ -18,8 +18,8 @@ export default function HomePage({
 }: HomePageProps) {
   const navigate = useNavigate();
   const [showSignIn, setShowSignIn] = useState(false);
-  const [username, setUsername] = useState("demo");
-  const [password, setPassword] = useState("SecurePass123!");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
 
