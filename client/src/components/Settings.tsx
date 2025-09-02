@@ -295,11 +295,11 @@ export default function Settings() {
             </div>
           </div>
 
-          {/* Subscription & Billing Section */}
+          {/* AI Model & API Section */}
           <div className="bg-white/80 backdrop-blur-sm border border-gray-300 rounded-xl p-5 shadow-md">
             <div className="mb-4">
-              <h2 className="text-lg font-bold text-gray-900">Subscription & Billing</h2>
-              <p className="text-sm text-gray-600">Manage your plan and payment details</p>
+              <h2 className="text-lg font-bold text-gray-900">AI Model & API</h2>
+              <p className="text-sm text-gray-600">Configure your AI model and API settings</p>
             </div>
             <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 flex items-center justify-between">
               <div className="flex items-center space-x-3">
@@ -307,8 +307,8 @@ export default function Settings() {
                   <span className="text-white text-xs font-bold">!</span>
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-gray-800">Custom domains are a Pro Plan add-on</p>
-                  <p className="text-xs text-gray-600">Paid Plans come with free vanity subdomains or Custom Domains for an additional $10/month per domain.</p>
+                  <p className="text-sm font-semibold text-gray-800">Advanced AI models require Pro Plan</p>
+                  <p className="text-xs text-gray-600">Upgrade to access GPT-4, Claude-3, and other premium AI models for enhanced document processing and responses.</p>
                 </div>
               </div>
               <button
@@ -320,29 +320,29 @@ export default function Settings() {
             </div>
           </div>
 
-          {/* Transfer Project Section */}
+          {/* Data Management Section */}
           <div className="bg-white/80 backdrop-blur-sm border border-gray-300 rounded-xl p-5 shadow-md">
             <div className="mb-4">
-              <h2 className="text-lg font-bold text-gray-900">Transfer Project</h2>
-              <p className="text-sm text-gray-600">Transfer your project to a different organization</p>
+              <h2 className="text-lg font-bold text-gray-900">Data Management</h2>
+              <p className="text-sm text-gray-600">Manage your document collections and data</p>
             </div>
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
                 <div className="w-5 h-5 bg-gray-500 rounded-lg flex items-center justify-center">
                   <svg className="h-3 w-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                   </svg>
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-gray-800">Transfer project to another organization</p>
-                  <p className="text-xs text-gray-600">To transfer projects, the owner must be a member of both the source and target organizations.</p>
+                  <p className="text-sm font-semibold text-gray-800">Export document collection</p>
+                  <p className="text-xs text-gray-600">Download all your processed documents, embeddings, and settings as a backup or for migration purposes.</p>
                 </div>
               </div>
               <button
                 type="button"
                 className="bg-gray-500 text-white rounded-md px-4 py-2 text-sm font-medium hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-all duration-200"
               >
-                Transfer project
+                Export Data
               </button>
             </div>
           </div>
