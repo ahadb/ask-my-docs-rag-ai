@@ -1,19 +1,10 @@
 from openai import OpenAI
 from typing import Optional
-from fastapi import APIRouter, Body
+from fastapi import APIRouter, Body, Depends
 from pydantic import BaseModel
 from app.services.embedding import embed_chunks
-from supabase import create_client, Client
-import os
-from dotenv import load_dotenv
-
-load_dotenv()
-
-# Initialize Supabase client
-supabase: Client = create_client(
-    os.getenv("SUPABASE_URL"),
-    os.getenv("SUPABASE_ANON_KEY")
-)
+from app.config import get_supabase_client
+from app.middleware.auth import get_current_user
 
 router = APIRouter(prefix="/query", tags=["query"])
 
@@ -22,13 +13,14 @@ class QueryRequest(BaseModel):
     top_k: Optional[int] = None
 
 @router.post("")
-async def query_docs(request: QueryRequest):
+async def query_docs(request: QueryRequest, current_user: dict = Depends(get_current_user)):
     client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
     try:
         # 1. Embed the question
         question_embedding = embed_chunks([request.question])[0]
 
         # 2. Search Supabase for similar chunks using pgvector
+        supabase = get_supabase_client()
         results = supabase.rpc(
             "match_chunks",
             {

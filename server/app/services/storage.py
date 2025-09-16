@@ -1,21 +1,14 @@
-from supabase import create_client, Client
 from typing import List, Dict
-import os
-
-from dotenv import load_dotenv
-load_dotenv()
-
-# Initialize Supabase client
-supabase: Client = create_client(
-    os.getenv("SUPABASE_URL"),
-    os.getenv("SUPABASE_ANON_KEY")
-)
+from ..config import get_supabase_client
 
 def store_embeddings(chunks: List[str], embeddings: List[List[float]], metadata_list: List[Dict]):
     """
     Store text chunks and their embeddings with metadata into Supabase.
     """
     try:
+        # Get Supabase client
+        supabase = get_supabase_client()
+        
         # Get filename from first metadata
         filename = metadata_list[0].get('file_name', 'unknown')
         

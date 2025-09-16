@@ -1,7 +1,8 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
-from app.routes import upload, query
+from app.routes import upload, query, auth
 from app.routes.settings import router as settings_router
+from app.middleware.auth import get_current_user
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -24,6 +25,10 @@ app = FastAPI(
 async def health_check():
     return {"status": "ok"}
 
+@app.get("/health-auth")
+async def health_auth_check(dict = Depends(get_current_user)):
+    return {"status": "ok"}
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -32,6 +37,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.include_router(auth.router)
 app.include_router(upload.router)
 app.include_router(query.router)
 app.include_router(settings_router)

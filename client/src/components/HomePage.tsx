@@ -1,10 +1,7 @@
-import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   ArrowRightIcon,
   CheckCircleIcon,
-  EyeIcon,
-  EyeSlashIcon,
 } from "@heroicons/react/24/outline";
 
 interface HomePageProps {
@@ -17,35 +14,9 @@ export default function HomePage({
   isAuthenticated,
 }: HomePageProps) {
   const navigate = useNavigate();
-  const [showSignIn, setShowSignIn] = useState(false);
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState("");
-
-  // Hardcoded credentials
-  const DEMO_USERNAME = "demo";
-  const DEMO_PASSWORD = "SecurePass123!";
-
-  const handleSignIn = (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-
-    if (username === DEMO_USERNAME && password === DEMO_PASSWORD) {
-      onLogin(true);
-      setShowSignIn(false);
-      setUsername("");
-      setPassword("");
-      // Navigate to dashboard after successful login
-      navigate("/dashboard");
-    } else {
-      setError("Invalid username or password");
-    }
-  };
 
   const handleSignOut = () => {
     onLogin(false);
-    setShowSignIn(false);
   };
 
   const handleNavigateToDashboard = () => {
@@ -121,12 +92,20 @@ export default function HomePage({
                  Go to Dashboard
                </button>
              ) : (
-               <button
-                 onClick={() => setShowSignIn(true)}
-                 className="rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 dark:bg-indigo-500 dark:hover:bg-indigo-400 dark:focus-visible:outline-indigo-500"
-               >
-                 Get started
-               </button>
+               <>
+                 <button
+                   onClick={() => navigate("/signin")}
+                   className="rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 dark:bg-indigo-500 dark:hover:bg-indigo-400 dark:focus-visible:outline-indigo-500"
+                 >
+                   Sign In
+                 </button>
+                 <button
+                   onClick={() => navigate("/signup")}
+                   className="rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-indigo-600 shadow-xs ring-1 ring-inset ring-indigo-600 hover:bg-indigo-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 dark:bg-indigo-500/10 dark:text-indigo-400 dark:ring-indigo-500/25 dark:hover:bg-indigo-500/20"
+                 >
+                   Sign Up
+                 </button>
+               </>
              )}
             <a href="#" className="text-sm/6 font-semibold text-gray-900 dark:text-white">
               Learn more <span aria-hidden="true">→</span>
@@ -158,7 +137,7 @@ export default function HomePage({
         {isAuthenticated ? (
           <div className="flex items-center space-x-3">
             <span className="text-gray-700 text-sm">
-              Welcome, {DEMO_USERNAME}!
+              Welcome, demo!
             </span>
             <button
               onClick={handleNavigateToDashboard}
@@ -177,7 +156,7 @@ export default function HomePage({
         ) : (
           <div>
             <button
-              onClick={() => setShowSignIn(!showSignIn)}
+              onClick={() => navigate("/signin")}
               className="text-gray-700 hover:text-gray-900 text-sm font-medium transition-colors duration-200"
             >
               Sign in →
@@ -185,88 +164,7 @@ export default function HomePage({
           </div>
         )}
 
-        {/* Sign In Dropdown */}
-        {showSignIn && (
-          <div className="fixed top-20 right-6 w-80 bg-white rounded-lg shadow-xl border border-gray-200 p-6 z-50">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">
-                Sign In
-              </h3>
-              <button
-                onClick={() => setShowSignIn(false)}
-                className="text-gray-400 hover:text-gray-600"
-              >
-                ✕
-              </button>
-            </div>
-
-            <form onSubmit={handleSignIn} className="space-y-4">
-              <div>
-                <label
-                  htmlFor="username"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  Username
-                </label>
-                <input
-                  type="text"
-                  id="username"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                  placeholder="Enter username"
-                  required
-                />
-              </div>
-
-              <div>
-                <label
-                  htmlFor="password"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  Password
-                </label>
-                <div className="relative">
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    id="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                    placeholder="Enter password"
-                    required
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                  >
-                    {showPassword ? (
-                      <EyeSlashIcon className="h-5 w-5 text-gray-400" />
-                    ) : (
-                      <EyeIcon className="h-5 w-5 text-gray-400" />
-                    )}
-                  </button>
-                </div>
-              </div>
-
-              {error && (
-                <div className="text-red-600 text-sm bg-red-50 p-2 rounded-md">
-                  {error}
-                </div>
-              )}
-
-              <button
-                type="submit"
-                className="w-full inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200"
-              >
-                Sign In
-              </button>
-            </form>
-          </div>
-        )}
       </div>
     </div>
-  
   );
 }

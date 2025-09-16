@@ -5,6 +5,8 @@ import Header from "./components/Header";
 import ContentArea from "./components/ContentArea";
 import Settings from "./components/Settings";
 import HomePage from "./components/HomePage";
+import SignIn from "./components/SignIn";
+import SignUp from "./components/SignUp";
 
 // Protected Route component
 function ProtectedRoute({ children, isAuthenticated }: { children: React.ReactNode; isAuthenticated: boolean }) {
@@ -57,6 +59,28 @@ export default function App() {
           path="/" 
           element={
             <HomePage
+              onLogin={handleLogin}
+              isAuthenticated={isAuthenticated}
+            />
+          } 
+        />
+
+        {/* Sign In Route */}
+        <Route 
+          path="/signin" 
+          element={
+            <SignIn
+              onLogin={handleLogin}
+              isAuthenticated={isAuthenticated}
+            />
+          } 
+        />
+
+        {/* Sign Up Route */}
+        <Route 
+          path="/signup" 
+          element={
+            <SignUp
               onLogin={handleLogin}
               isAuthenticated={isAuthenticated}
             />

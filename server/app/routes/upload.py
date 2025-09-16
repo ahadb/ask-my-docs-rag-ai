@@ -1,21 +1,13 @@
 import json
 import os
 import asyncio
-from fastapi import APIRouter, UploadFile, File, HTTPException
+from fastapi import APIRouter, UploadFile, File, HTTPException, Depends
 from app.services.parsing import parse_file, parse_raw_bird_text, birds_list_to_string
 from app.services import chunking
 from app.services import embedding
 from app.services import storage
-from supabase import create_client, Client
-from dotenv import load_dotenv
-
-load_dotenv()
-
-# Initialize Supabase client
-supabase: Client = create_client(
-    os.getenv("SUPABASE_URL"),
-    os.getenv("SUPABASE_ANON_KEY")
-)
+from app.config import get_supabase_client
+from app.middleware.auth import get_current_user
 
 router = APIRouter(prefix="/upload", tags=["upload"])
 
@@ -24,11 +16,13 @@ router = APIRouter(prefix="/upload", tags=["upload"])
 router = APIRouter(prefix="/upload", tags=["upload"])
 
 @router.post("")
-async def upload_file(file: UploadFile = File(...)):
+async def upload_file(file: UploadFile = File(...), current_user: dict = Depends(get_current_user)):
     if not file.filename.endswith((".pdf", ".docx")):
         raise HTTPException(status_code=400, detail="Unsupported file type")
     try:
-
+        # Get Supabase client
+        supabase = get_supabase_client()
+        
         existing_doc = supabase.table("documents").select("id").eq("filename", file.filename).execute()
         
         if existing_doc.data:
@@ -84,7 +78,7 @@ async def upload_file(file: UploadFile = File(...)):
             for i in range(len(chunks))
         ]
 
-        # 5. Store in vector DB (Chroma)
+        # 5. Store in vector DB (Supabase)
         storage.store_embeddings(chunks, embeddings, metadata_list)
         processing_steps[4]["status"] = "completed"  # storing_in_vector_db completed
 
@@ -176,7 +170,7 @@ async def upload_files_batch(files: list[UploadFile] = File(...)):
                     for i in range(len(chunks))
                 ]
 
-                # 5. Store in vector DB (Chroma)
+                # 5. Store in vector DB (Supabase)
                 storage.store_embeddings(chunks, embeddings, metadata_list)
                 processing_steps[4]["status"] = "completed"
 

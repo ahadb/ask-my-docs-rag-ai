@@ -1,8 +1,9 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel
 import json
 import os
 from typing import Optional
+from app.middleware.auth import get_current_user
 
 router = APIRouter(prefix="/settings")
 
@@ -45,12 +46,12 @@ def save_settings(settings: dict):
         json.dump(settings, f, indent=2)
 
 @router.get("")
-def get_settings():
+def get_settings(current_user: dict = Depends(get_current_user)):
     """Get current application settings"""
     return load_settings()
 
 @router.post("")
-def update_settings(settings_update: SettingsUpdate):
+def update_settings(settings_update: SettingsUpdate, current_user: dict = Depends(get_current_user)):
     """Update application settings"""
     current_settings = load_settings()
     
@@ -75,7 +76,7 @@ def update_settings(settings_update: SettingsUpdate):
     return {"message": "Settings updated successfully", "settings": current_settings}
 
 @router.post("/reset")
-def reset_settings():
+def reset_settings(current_user: dict = Depends(get_current_user)):
     """Reset settings to defaults"""
     save_settings(DEFAULT_SETTINGS.copy())
     return {"message": "Settings reset to defaults", "settings": DEFAULT_SETTINGS}
