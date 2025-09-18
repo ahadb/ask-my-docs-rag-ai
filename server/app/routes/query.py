@@ -2,6 +2,7 @@ from openai import OpenAI
 from typing import Optional
 from fastapi import APIRouter, Body, Depends
 from pydantic import BaseModel
+import os
 from app.services.embedding import embed_chunks
 from app.config import get_supabase_client
 from app.middleware.auth import get_current_user
@@ -33,11 +34,20 @@ async def query_docs(request: QueryRequest, current_user: dict = Depends(get_cur
         retrieved_chunks = [result["content"] for result in results.data]
         metadatas = [result["metadata"] for result in results.data]
 
-        # 4. Create the context prompt
-        context = "\n\n".join(retrieved_chunks)
+        # Get unique source documents
+        source_files = list(set(meta.get("file_name", "Unknown") for meta in metadatas))
+
+        # 4. Create the context prompt with source attribution
+        context_with_sources = []
+        for i, (chunk, meta) in enumerate(zip(retrieved_chunks, metadatas)):
+            source_file = meta.get("file_name", "Unknown")
+            context_with_sources.append(f"[Source: {source_file}]\n{chunk}")
+        
+        context = "\n\n".join(context_with_sources)
         system_prompt = (
             "You are an AI assistant that answers questions based on the provided documents. "
-            "Answer clearly, concisely, and include facts only from the context below.\n\n"
+            "Answer clearly, concisely, and include facts only from the context below. "
+            "When citing information, mention which document it came from.\n\n"
             f"Context:\n{context}\n\nQuestion: {request.question}"
         )
 
@@ -52,7 +62,9 @@ async def query_docs(request: QueryRequest, current_user: dict = Depends(get_cur
         return {
             "question": request.question,
             "answer": response.choices[0].message.content,
-            "sources": metadatas
+            "sources": metadatas,
+            "source_documents": source_files,
+            "chunks_found": len(retrieved_chunks)
         }
 
     except Exception as e:

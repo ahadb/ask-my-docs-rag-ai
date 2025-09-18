@@ -1,7 +1,7 @@
 from typing import List, Dict
 from ..config import get_supabase_client
 
-def store_embeddings(chunks: List[str], embeddings: List[List[float]], metadata_list: List[Dict]):
+def store_embeddings(chunks: List[str], embeddings: List[List[float]], metadata_list: List[Dict], user_id: str = None):
     """
     Store text chunks and their embeddings with metadata into Supabase.
     """
@@ -18,6 +18,10 @@ def store_embeddings(chunks: List[str], embeddings: List[List[float]], metadata_
             "content": "",  # We don't store full content in documents table
             "metadata": {"file_name": filename}
         }
+        
+        # TODO: Add user_id when database schema is updated
+        # if user_id:
+        #     document_data["user_id"] = user_id
         
         document_result = supabase.table("documents").insert(document_data).execute()
         document_id = document_result.data[0]["id"]
@@ -42,7 +46,9 @@ def store_embeddings(chunks: List[str], embeddings: List[List[float]], metadata_
             
             supabase.table("embeddings").insert(embedding_data).execute()
             
-        print(f"Stored {len(chunks)} chunks for document: {filename}")
+        print(f"✅ Successfully stored {len(chunks)} chunks for document: {filename}")
+        print(f"✅ Document ID: {document_id}")
+        print(f"✅ First chunk preview: {chunks[0][:100]}..." if chunks else "❌ No chunks to store")
         
     except Exception as e:
         print(f"Error storing embeddings: {e}")

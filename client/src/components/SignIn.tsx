@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { setAuthToken } from "../utils/auth";
 import {
   ArrowLeftIcon,
   EyeIcon,
@@ -9,7 +10,7 @@ import {
 } from "@heroicons/react/24/outline";
 
 interface SignInProps {
-  onLogin: (success: boolean) => void;
+  onLogin: (success: boolean, userData?: { id: string; email: string; full_name: string }) => void;
   isAuthenticated: boolean;
 }
 
@@ -30,29 +31,48 @@ export default function SignIn({ onLogin, isAuthenticated }: SignInProps) {
     setError("");
     setIsLoading(true);
 
-    // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 500));
+    try {
+      // Call your backend auth endpoint
+      const response = await fetch("http://localhost:8000/auth/signin", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: username,
+          password: password,
+        }),
+      });
 
-    if (username === DEMO_USERNAME && password === DEMO_PASSWORD) {
-      onLogin(true);
-      navigate("/dashboard");
-    } else {
-      setError("Invalid username or password");
+      if (response.ok) {
+        const data = await response.json();
+        // Store the JWT token
+        setAuthToken(data.access_token);
+        onLogin(true, data.user);
+        navigate("/dashboard");
+      } else {
+        const errorData = await response.json();
+        setError(errorData.detail || "Invalid credentials");
+      }
+    } catch (error) {
+      setError("Network error. Please try again.");
     }
+    
     setIsLoading(false);
   };
 
-  const handleFillDemo = () => {
-    setUsername(DEMO_USERNAME);
-    setPassword(DEMO_PASSWORD);
-    setError("");
-  };
+  // const handleFillDemo = () => {
+  //   setUsername(DEMO_USERNAME);
+  //   setPassword(DEMO_PASSWORD);
+  //   setError("");
+  // };
 
   // Redirect if already authenticated
-  if (isAuthenticated) {
-    navigate("/dashboard");
-    return null;
-  }
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/dashboard");
+    }
+  }, [isAuthenticated, navigate]);
 
   return (
     <div className="min-h-screen bg-white relative isolate overflow-hidden">
@@ -101,7 +121,7 @@ export default function SignIn({ onLogin, isAuthenticated }: SignInProps) {
             <div className="flex items-center">
               <div className="flex-shrink-0">
                 <div className="flex items-center">
-                  <span className="text-xl font-semibold text-gray-900">RAG Assistant</span>
+                  <span className="text-xl font-semibold text-gray-900">DocChat</span>
                 </div>
               </div>
             </div>
@@ -143,13 +163,13 @@ export default function SignIn({ onLogin, isAuthenticated }: SignInProps) {
               </div>
 
               {/* Demo Credentials Info */}
-              <div className="mb-6 p-3 bg-blue-50 border border-blue-200 rounded">
+              {/* <div className="mb-6 p-3 bg-blue-50 border border-blue-200 rounded">
                 <p className="text-sm text-blue-800">
                   <strong>Demo Credentials:</strong><br />
                   Username: <code className="bg-blue-100 px-1 rounded text-xs">{DEMO_USERNAME}</code><br />
                   Password: <code className="bg-blue-100 px-1 rounded text-xs">{DEMO_PASSWORD}</code>
                 </p>
-              </div>
+              </div> */}
 
               <form onSubmit={handleSignIn} className="space-y-6">
                 {/* Username Field */}
@@ -228,14 +248,14 @@ export default function SignIn({ onLogin, isAuthenticated }: SignInProps) {
                       "Sign in"
                     )}
                   </button>
-
+{/* 
                   <button
                     type="button"
                     onClick={handleFillDemo}
                     className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                   >
                     Fill Demo Credentials
-                  </button>
+                  </button> */}
                 </div>
 
                 {/* Create Account Link */}

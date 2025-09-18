@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { clearAuthToken } from "../utils/auth";
 import {
   ArrowRightIcon,
   CheckCircleIcon,
@@ -16,6 +17,7 @@ export default function HomePage({
   const navigate = useNavigate();
 
   const handleSignOut = () => {
+    clearAuthToken();
     onLogin(false);
   };
 

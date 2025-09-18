@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { setAuthToken } from "../utils/auth";
 import {
   ArrowLeftIcon,
   EyeIcon,
@@ -9,7 +10,7 @@ import {
 } from "@heroicons/react/24/outline";
 
 interface SignUpProps {
-  onLogin: (success: boolean) => void;
+  onLogin: (success: boolean, userData?: { id: string; email: string; full_name: string }) => void;
   isAuthenticated: boolean;
 }
 
@@ -54,20 +55,43 @@ export default function SignUp({ onLogin, isAuthenticated }: SignUpProps) {
       return;
     }
 
-    // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    try {
+      // Call your backend auth endpoint
+      const response = await fetch("http://localhost:8000/auth/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password,
+          full_name: `${formData.firstName} ${formData.lastName}`,
+        }),
+      });
 
-    // For demo purposes, simulate successful signup
-    onLogin(true);
-    navigate("/dashboard");
+      if (response.ok) {
+        const data = await response.json();
+        // Store the JWT token
+        setAuthToken(data.access_token);
+        onLogin(true, data.user);
+        navigate("/dashboard");
+      } else {
+        const errorData = await response.json();
+        setError(errorData.detail || "Signup failed");
+      }
+    } catch (error) {
+      setError("Network error. Please try again.");
+    }
+    
     setIsLoading(false);
   };
 
   // Redirect if already authenticated
-  if (isAuthenticated) {
-    navigate("/dashboard");
-    return null;
-  }
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/dashboard");
+    }
+  }, [isAuthenticated, navigate]);
 
   return (
     <div className="min-h-screen bg-white relative isolate overflow-hidden">
@@ -116,7 +140,7 @@ export default function SignUp({ onLogin, isAuthenticated }: SignUpProps) {
             <div className="flex items-center">
               <div className="flex-shrink-0">
                 <div className="flex items-center">
-                  <span className="text-xl font-semibold text-gray-900">RAG Assistant</span>
+                  <span className="text-xl font-semibold text-gray-900">DocChat</span>
                 </div>
               </div>
             </div>
@@ -257,7 +281,7 @@ export default function SignUp({ onLogin, isAuthenticated }: SignUpProps) {
                       )}
                     </button>
                   </div>
-                  <div className="mt-1 flex items-center justify-between">
+                  <div className="mt-3 flex items-center justify-between">
                     <label className="flex items-center cursor-pointer">
                       <input type="checkbox" className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" />
                       <span className="ml-2 text-sm text-gray-600 hover:text-gray-800">Show Password</span>
@@ -294,7 +318,7 @@ export default function SignUp({ onLogin, isAuthenticated }: SignUpProps) {
                       )}
                     </button>
                   </div>
-                  <div className="mt-1 flex items-center justify-between">
+                  <div className="mt-3 flex items-center justify-between">
                     <label className="flex items-center cursor-pointer">
                       <input type="checkbox" className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" />
                       <span className="ml-2 text-sm text-gray-600 hover:text-gray-800">Show Password</span>

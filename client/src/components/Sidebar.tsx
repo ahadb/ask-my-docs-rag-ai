@@ -2,26 +2,28 @@ import { Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
-  HomeIcon,
   XMarkIcon,
   Cog6ToothIcon,
   DocumentTextIcon,
+  ArrowRightOnRectangleIcon,
 } from "@heroicons/react/24/outline";
+import { clearAuthToken } from "../utils/auth";
 
 interface SidebarProps {
   sidebarOpen: boolean;
   setSidebarOpen: (open: boolean) => void;
+  onLogout?: () => void;
 }
 
 export default function Sidebar({
   sidebarOpen,
   setSidebarOpen,
+  onLogout,
 }: SidebarProps) {
   const navigate = useNavigate();
   const location = useLocation();
   
   const navigation = [
-    { name: "Home", href: "/", icon: HomeIcon },
     { name: "Dashboard", href: "/dashboard", icon: DocumentTextIcon },
     { name: "Settings", href: "/settings", icon: Cog6ToothIcon },
   ];
@@ -93,34 +95,10 @@ export default function Sidebar({
                 </Transition.Child>
                 {/* Sidebar component for mobile */}
                 <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-white px-6 pb-4">
-                  <div className="flex h-16 shrink-0 items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <div className="p-2 bg-indigo-600 rounded-lg">
-                        <svg className="h-6 w-6 text-white" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          {/* Document base */}
-                          <path d="M7 2C6.44772 2 6 2.44772 6 3V21C6 21.5523 6.44772 22 7 22H17C17.5523 22 18 21.5523 18 21V9L13 4H7Z" fill="currentColor" fillOpacity="0.9"/>
-                          {/* Document fold */}
-                          <path d="M13 4V9H18L13 4Z" fill="currentColor" fillOpacity="0.7"/>
-                          {/* AI brain/neural network nodes */}
-                          <circle cx="9" cy="12" r="1" fill="white" fillOpacity="0.8"/>
-                          <circle cx="15" cy="12" r="1" fill="white" fillOpacity="0.8"/>
-                          <circle cx="12" cy="15" r="1" fill="white" fillOpacity="0.8"/>
-                          <circle cx="12" cy="9" r="1" fill="white" fillOpacity="0.8"/>
-                          {/* Neural connections */}
-                          <path d="M9 12L12 9M12 9L15 12M12 9L12 15" stroke="white" strokeWidth="1.5" strokeLinecap="round" opacity="0.8"/>
-                          {/* Search/magnifying glass */}
-                          <circle cx="16" cy="16" r="2" stroke="white" strokeWidth="1.5" fill="none"/>
-                          <path d="M18 18L20 20" stroke="white" strokeWidth="1.5" strokeLinecap="round"/>
-                        </svg>
-                      </div>
+                  <div className="flex h-16 shrink-0 items-center">
+                    <div className="flex items-center">
+                      <h1 className="text-xl font-bold text-gray-900">DocChat</h1>
                     </div>
-                    <button className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
-                      <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
-                        <circle cx="12" cy="6" r="2" />
-                        <circle cx="12" cy="12" r="2" />
-                        <circle cx="12" cy="18" r="2" />
-                      </svg>
-                    </button>
                   </div>
                   <nav className="flex flex-1 flex-col">
                     <ul role="list" className="flex flex-1 flex-col gap-y-7">
@@ -168,34 +146,10 @@ export default function Sidebar({
       {/* Static sidebar for desktop */}
       <div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
         <div className="flex grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-white px-6 pb-4">
-          <div className="flex h-16 shrink-0 items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="p-2 bg-indigo-600 rounded-lg">
-                <svg className="h-6 w-6 text-white" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  {/* Document base */}
-                  <path d="M7 2C6.44772 2 6 2.44772 6 3V21C6 21.5523 6.44772 22 7 22H17C17.5523 22 18 21.5523 18 21V9L13 4H7Z" fill="currentColor" fillOpacity="0.9"/>
-                  {/* Document fold */}
-                  <path d="M13 4V9H18L13 4Z" fill="currentColor" fillOpacity="0.7"/>
-                  {/* AI brain/neural network nodes */}
-                  <circle cx="9" cy="12" r="1" fill="white" fillOpacity="0.8"/>
-                  <circle cx="15" cy="12" r="1" fill="white" fillOpacity="0.8"/>
-                  <circle cx="12" cy="15" r="1" fill="white" fillOpacity="0.8"/>
-                  <circle cx="12" cy="9" r="1" fill="white" fillOpacity="0.8"/>
-                  {/* Neural connections */}
-                  <path d="M9 12L12 9M12 9L15 12M12 9L12 15" stroke="white" strokeWidth="1.5" strokeLinecap="round" opacity="0.8"/>
-                  {/* Search/magnifying glass */}
-                  <circle cx="16" cy="16" r="2" stroke="white" strokeWidth="1.5" fill="none"/>
-                  <path d="M18 18L20 20" stroke="white" strokeWidth="1.5" strokeLinecap="round"/>
-                </svg>
-              </div>
+          <div className="flex h-16 shrink-0 items-center">
+            <div className="flex items-center">
+              <h1 className="text-xl font-bold text-gray-900">DocChat</h1>
             </div>
-            <button className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
-              <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
-                <circle cx="12" cy="6" r="2" />
-                <circle cx="12" cy="12" r="2" />
-                <circle cx="12" cy="18" r="2" />
-              </svg>
-            </button>
           </div>
           <nav className="flex flex-1 flex-col">
             <ul role="list" className="flex flex-1 flex-col gap-y-7">
@@ -224,12 +178,29 @@ export default function Sidebar({
                         {item.name}
                       </button>
                       {/* Add divider between Dashboard and Settings */}
-                      {index === 1 && (
+                      {index === 0 && (
                         <div className="mx-2 my-2 border-t border-gray-200" />
                       )}
                     </li>
                   ))}
                 </ul>
+              </li>
+              <li className="mt-auto">
+                <button
+                  onClick={() => {
+                    clearAuthToken();
+                    if (onLogout) {
+                      onLogout();
+                    }
+                  }}
+                  className="group flex gap-x-3 rounded-md p-2 text-sm font-semibold w-full text-left text-gray-700 hover:bg-gray-50 hover:text-red-600"
+                >
+                  <ArrowRightOnRectangleIcon
+                    className="h-6 w-5 shrink-0 text-gray-400 group-hover:text-red-600"
+                    aria-hidden="true"
+                  />
+                  Logout
+                </button>
               </li>
             </ul>
           </nav>

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { API_URLS } from "../config";
+import { fetchWithAuth } from "../utils/auth";
 
 interface Settings {
   chunk_size: number;
@@ -33,7 +34,7 @@ export default function Settings() {
 
   const loadSettings = async () => {
     try {
-      const response = await fetch(API_URLS.SETTINGS);
+      const response = await fetchWithAuth(API_URLS.SETTINGS);
       if (response.ok) {
         const data = await response.json();
         setSettings(data);
@@ -50,7 +51,7 @@ export default function Settings() {
     setMessage("");
 
     try {
-      const response = await fetch(API_URLS.SETTINGS, {
+      const response = await fetchWithAuth(API_URLS.SETTINGS, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -73,7 +74,7 @@ export default function Settings() {
 
   const resetSettings = async () => {
     try {
-      const response = await fetch(API_URLS.SETTINGS_RESET, {
+      const response = await fetchWithAuth(API_URLS.SETTINGS_RESET, {
         method: "POST",
       });
 

@@ -4,15 +4,40 @@ import {
   DocumentIcon,
   XMarkIcon,
   DocumentTextIcon,
+  PaperAirplaneIcon,
+  SparklesIcon,
+  ClipboardDocumentIcon,
+  HandThumbUpIcon,
+  HandThumbDownIcon,
+  ArrowUpIcon,
 } from "@heroicons/react/24/outline";
 import { API_URLS } from "../config";
+import { fetchWithAuth } from "../utils/auth";
+import DocumentLibrary from "./DocumentLibrary";
+import SampleDocsModal from "./SampleDocsModal";
 
 export default function ContentArea() {
   const [isDragOver, setIsDragOver] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [leftWidth, setLeftWidth] = useState(40); // 40% default
+  const [documentRefreshTrigger, setDocumentRefreshTrigger] = useState(0);
   const [isResizing, setIsResizing] = useState(false);
   const [chunksCreated, setChunksCreated] = useState<number>(0);
+  const [showSampleDocsModal, setShowSampleDocsModal] = useState(false);
+
+  // Check for first-time visit (temporarily always show for testing)
+  useEffect(() => {
+    const hasSeenSampleDocs = localStorage.getItem('hasSeenSampleDocs');
+    console.log('hasSeenSampleDocs:', hasSeenSampleDocs);
+    // Temporarily always show modal for testing
+    console.log('Showing sample docs modal (testing mode)');
+    setShowSampleDocsModal(true);
+  }, []);
+
+  const handleCloseSampleModal = () => {
+    setShowSampleDocsModal(false);
+    localStorage.setItem('hasSeenSampleDocs', 'true');
+  };
 
   
   const [chunkPreviews, setChunkPreviews] = useState<{
@@ -145,7 +170,7 @@ export default function ContentArea() {
         [file.name]: initialSteps,
       }));
 
-      const response = await fetch(API_URLS.UPLOAD, {
+      const response = await fetchWithAuth(API_URLS.UPLOAD, {
         method: "POST",
         body: formData,
       });
@@ -160,6 +185,10 @@ export default function ContentArea() {
       // Set timestamp for successful upload
       const timestamp = new Date().toLocaleString();
       setUploadTimestamps((prev) => ({ ...prev, [file.name]: timestamp }));
+
+      // Trigger document library refresh
+      console.log("Triggering document library refresh after upload");
+      setDocumentRefreshTrigger(prev => prev + 1);
 
       // Update chunks count if the response includes it
       if (result.num_chunks) {
@@ -239,7 +268,7 @@ export default function ContentArea() {
               formData.append("files", file);
             });
 
-            const response = await fetch(API_URLS.UPLOAD_BATCH, {
+            const response = await fetchWithAuth(API_URLS.UPLOAD_BATCH, {
               method: "POST",
               body: formData,
             });
@@ -336,7 +365,7 @@ export default function ContentArea() {
               formData.append("files", file);
             });
 
-            const response = await fetch(API_URLS.UPLOAD_BATCH, {
+            const response = await fetchWithAuth(API_URLS.UPLOAD_BATCH, {
               method: "POST",
               body: formData,
             });
@@ -401,7 +430,7 @@ export default function ContentArea() {
 
   const clearAllData = useCallback(async () => {
     try {
-      const response = await fetch(API_URLS.UPLOAD_CLEAR, {
+      const response = await fetchWithAuth(API_URLS.UPLOAD_CLEAR, {
         method: "DELETE",
       });
 
@@ -446,7 +475,7 @@ export default function ContentArea() {
     setIsQuerying(true);
 
     try {
-      const response = await fetch(API_URLS.QUERY, {
+      const response = await fetchWithAuth(API_URLS.QUERY, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -655,26 +684,41 @@ export default function ContentArea() {
           {/* Drag & Drop Area */}
           <div className="w-full max-w-2xl mb-2">
             <div
-              className={`relative border-2 border-dashed rounded-xl p-8 text-center transition-all duration-200 ${
+              className={`relative border-3 border-dashed rounded-xl p-8 text-center transition-all duration-300 ${
                 isDragOver
-                  ? "border-indigo-400 bg-indigo-50 scale-105 shadow-lg"
-                  : "border-gray-300 hover:border-indigo-300 hover:bg-gray-50 bg-white shadow-sm hover:shadow-md"
+                  ? "border-indigo-400 bg-indigo-50 scale-105 shadow-lg animate-pulse"
+                  : "border-gray-400 hover:border-indigo-400 hover:bg-gray-50 bg-white shadow-sm hover:shadow-md"
               }`}
+              style={{
+                backgroundImage: isDragOver ? 'none' : `repeating-linear-gradient(
+                  45deg,
+                  transparent,
+                  transparent 10px,
+                  rgba(156, 163, 175, 0.1) 10px,
+                  rgba(156, 163, 175, 0.1) 20px
+                )`
+              }}
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
               onDrop={handleDrop}
             >
-              <CloudArrowUpIcon className={`mx-auto h-12 w-12 mb-4 transition-colors ${
-                isDragOver ? "text-indigo-500" : "text-gray-400"
+              <CloudArrowUpIcon className={`mx-auto h-14 w-14 mb-4 transition-all duration-300 ${
+                isDragOver ? "text-indigo-500 animate-bounce" : "text-gray-500"
               }`} />
-              <div className="text-base text-gray-700 mb-4">
-                <p className="font-semibold mb-2">Drop your files here or</p>
-                <label
-                  htmlFor="file-upload"
-                  className="text-indigo-600 hover:text-indigo-500 cursor-pointer font-medium underline decoration-2 underline-offset-2"
-                >
+              
+              <div className="text-lg font-medium text-gray-800 mb-2">
+                {isDragOver ? "Drop your files here!" : "Drag & drop your documents"}
+              </div>
+              
+              <div className="text-base text-gray-600 mb-4">
+                <p className="mb-2">
+                  <label
+                    htmlFor="file-upload"
+                    className="text-indigo-600 hover:text-indigo-500 cursor-pointer font-medium underline decoration-2 underline-offset-2"
+                  >
                   browse files
                 </label>
+                </p>
                 <input
                   id="file-upload"
                   type="file"
@@ -684,15 +728,26 @@ export default function ContentArea() {
                   accept=".pdf,.docx"
                 />
               </div>
-              <div className="flex items-center justify-center space-x-3">
-                <span className="inline-flex items-center px-2 py-1 text-sm font-medium bg-gray-100 border border-gray-300 rounded-lg text-gray-700">
-                  <DocumentTextIcon className="h-4 w-4 mr-2 text-red-500" />
-                  PDF
-                </span>
-                <span className="inline-flex items-center px-2 py-1 text-sm font-medium bg-gray-100 border border-gray-300 rounded-lg text-gray-700">
-                  <DocumentIcon className="h-4 w-4 mr-2 text-blue-500" />
-                  DOCX
-                </span>
+              {/* File Requirements */}
+              <div className="mt-4 space-y-2">
+                <div className="flex items-center justify-center space-x-4">
+                  <span className="inline-flex items-center px-3 py-1 text-sm font-medium bg-red-50 border border-red-200 rounded-full text-red-700">
+                    <DocumentIcon className="h-4 w-4 mr-2" />
+                    PDF
+                  </span>
+                  <span className="inline-flex items-center px-3 py-1 text-sm font-medium bg-blue-50 border border-blue-200 rounded-full text-blue-700">
+                    <DocumentTextIcon className="h-4 w-4 mr-2" />
+                    DOCX
+                  </span>
+                </div>
+                
+                {/* File Size and Limits */}
+                <div className="text-center">
+                  <p className="text-sm text-gray-500">
+                    <span className="font-medium">Max file size:</span> 50MB • 
+                    <span className="font-medium ml-1">Multiple files:</span> Supported
+                  </p>
+                </div>
               </div>
             </div>
           </div>
@@ -765,10 +820,10 @@ export default function ContentArea() {
           </div>
 
                                {/* Chunk Distribution Visualization */}
-          <div className="w-full max-w-2xl mb-4">
+          {/* <div className="w-full max-w-2xl mb-4">
             {uploadedFiles.length > 0 ? (
               <div className="bg-white/90 backdrop-blur-sm border border-gray-200 rounded-lg p-4 shadow-sm">
-                {/* Chunk Distribution Chart */}
+              
                 <div className="mb-4">
                   <div className="flex items-center justify-between mb-3">
                     <span className="text-sm font-medium text-gray-700">Chunk Distribution</span>
@@ -777,7 +832,7 @@ export default function ContentArea() {
                     </span>
                   </div>
                   
-                  {/* Visual Chunk Bars */}
+           
                   <div className="space-y-3">
                     {Object.entries(chunkPreviews).map(([filename, previews]) => (
                       <div key={filename} className="space-y-2">
@@ -787,7 +842,7 @@ export default function ContentArea() {
                           </span>
                         </div>
                         
-                        {/* Chunk Bar Visualization */}
+                     
                         <div className="relative h-6 bg-gray-100 rounded-full overflow-hidden shadow-inner">
                           <div className="absolute inset-0 flex">
                             {previews.map((_, index) => (
@@ -801,12 +856,11 @@ export default function ContentArea() {
                               />
                             ))}
                           </div>
-                          
-                          {/* Enhanced hover effect overlay */}
+                   
                           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-200" />
                         </div>
                         
-                        {/* Chunk Details */}
+                    
                         <div className="text-xs text-gray-600">
                           <span className="inline-flex items-center space-x-1">
                             <div className="w-2 h-2 bg-blue-600 rounded-full shadow-sm"></div>
@@ -835,10 +889,10 @@ export default function ContentArea() {
                 </div>
               </div>
             )}
-          </div>
+          </div> */}
 
           {/* Embeddings Visualization */}
-          <div className="w-full max-w-2xl mb-4">
+          {/* <div className="w-full max-w-2xl mb-4">
             <div className="bg-white/90 backdrop-blur-sm border border-gray-200 rounded-lg p-4 shadow-sm">
               <div className="mb-4">
                 <div className="flex items-center justify-between mb-3">
@@ -850,9 +904,9 @@ export default function ContentArea() {
                   )}
                 </div>
                 
-                {/* 2D Embeddings Scatter Plot */}
+           
                 <div className="relative h-32 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg border border-gray-200 overflow-hidden">
-                  {/* Grid lines */}
+              
                   <div className="absolute inset-0 opacity-20">
                     <div className="w-full h-full" style={{
                       backgroundImage: `
@@ -863,7 +917,7 @@ export default function ContentArea() {
                     }} />
                   </div>
                   
-                  {/* Embedding points - only show when files are uploaded */}
+                
                   {uploadedFiles.length > 0 ? (
                     <>
                       {Object.entries(chunkPreviews).map(([filename, previews]) => (
@@ -894,14 +948,14 @@ export default function ContentArea() {
                         })
                       ))}
                       
-                      {/* Center reference point */}
+                     
                       <div className="absolute top-1/2 left-1/2 w-2 h-2 bg-indigo-600 rounded-full transform -translate-x-1 -translate-y-1 opacity-60" />
                       
-                      {/* Hover overlay for interaction */}
+
                       <div className="absolute inset-0 bg-transparent hover:bg-black/5 transition-colors duration-200" />
                     </>
                   ) : (
-                    /* Empty state when no files uploaded */
+                   
                     <div className="absolute inset-0 flex items-center justify-center">
                       <div className="text-center">
                         <div className="w-12 h-12 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-full flex items-center justify-center mx-auto mb-2">
@@ -917,7 +971,7 @@ export default function ContentArea() {
                   )}
                 </div>
                 
-                {/* Legend and Info */}
+              
                 <div className="mt-3 flex items-center justify-between text-xs text-gray-600">
                   <div className="flex items-center space-x-4">
                     <span className="flex items-center space-x-1">
@@ -935,57 +989,33 @@ export default function ContentArea() {
                 </div>
               </div>
             </div>
-          </div>
+          </div> */}
 
           {/* Processing Documents with Steps */}
-          <div className="w-full max-w-2xl mb-6">
-            <div className="bg-gradient-to-r from-blue-50 to-indigo-100 border border-blue-200 rounded-lg p-4 shadow-sm">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center space-x-3">
-                  <div
-                    className={`w-3 h-3 rounded-full ${
-                      uploadedFiles.length > 0
-                        ? "bg-blue-500 animate-pulse"
-                        : "bg-gray-400"
-                    }`}
-                  ></div>
-                  <div>
-                    <span className="text-base font-bold text-gray-800">
-                      {uploadedFiles.length > 0
-                        ? "Processing Documents"
-                        : "Document Processing"}
-                    </span>
-                    <p className="text-xs text-gray-600 mt-1">
-                      {uploadedFiles.length > 0
-                        ? "Creating searchable chunks for AI queries"
-                        : "Upload documents to begin processing"}
-                    </p>
-                  </div>
-                </div>
-                <div className="text-right">
-                  {/* <p className="text-2xl font-bold text-blue-600">
-                    {chunksCreated}
-                  </p>
-                  <p className="text-xs text-gray-600 font-medium">
-                    chunks created
-                  </p>
-                  <p className="text-xs text-gray-500 mt-1">
-                    {uploadedFiles.length > 0 && chunksCreated > 0
-                      ? "Ready for AI queries"
-                      : uploadedFiles.length > 0
-                      ? "Processing..."
-                      : "Waiting for upload"}
-                  </p> */}
-                </div>
+          <div className="w-full max-w-2xl mb-4">
+            <div className="bg-white border border-gray-200 rounded-lg shadow-sm">
+              <div className="px-6 py-4 border-b border-gray-200">
+                <h2 className="text-lg font-semibold text-gray-900">
+                  {uploadedFiles.length > 0
+                    ? "Processing Documents"
+                    : "Document Processing"}
+                </h2>
+                <p className="text-sm text-gray-600">
+                  {uploadedFiles.length > 0
+                    ? "Creating searchable chunks for AI queries"
+                    : "Upload documents to begin processing"}
+                </p>
               </div>
+              
+              <div className="p-6">
 
               {/* Progress Bar */}
               <div className="mb-3">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-medium text-gray-700">
-                    Processing Progress
+                <div className="flex items-center justify-between mb-1.5">
+                  <span className="text-xs font-medium text-gray-600">
+                    Progress
                   </span>
-                  <span className="text-xs text-gray-600">
+                  <span className="text-xs text-gray-500">
                     {Object.keys(processingSteps).length > 0
                       ? `${
                           Object.values(processingSteps)
@@ -995,9 +1025,9 @@ export default function ContentArea() {
                       : "0/0 steps"}
                   </span>
                 </div>
-                <div className="w-full bg-gray-200 rounded-full h-2">
+                <div className="w-full bg-gray-100 rounded-full h-1.5">
                   <div
-                    className="bg-gradient-to-r from-blue-500 to-indigo-600 h-2 rounded-full transition-all duration-500 ease-out"
+                    className="bg-indigo-500 h-1.5 rounded-full transition-all duration-500 ease-out"
                     style={{
                       width: `${
                         Object.keys(processingSteps).length > 0
@@ -1015,54 +1045,51 @@ export default function ContentArea() {
               </div>
 
               {/* Processing Steps */}
-              <div className="space-y-1.5 max-h-24 overflow-y-auto">
+              <div className="space-y-2 max-h-20 overflow-y-auto">
                 {Object.keys(processingSteps).length > 0 ? (
                   Object.entries(processingSteps).map(([filename, steps]) => (
                     <div
                       key={filename}
-                      className="bg-white rounded p-2 border border-blue-200"
+                      className="bg-gray-50 rounded-md p-2 border border-gray-100"
                     >
-                      <h4 className="text-xs font-semibold text-gray-700 mb-1.5">
+                      <h4 className="text-xs font-medium text-gray-700 mb-1">
                         {filename}
                       </h4>
-                      <div className="space-y-1">
+                      <div className="space-y-0.5">
                         {steps.map((step) => (
                           <div
                             key={step.step}
                             className="flex items-center space-x-2"
                           >
                             <div
-                              className={`w-1.5 h-1.5 rounded-full ${
+                              className={`w-1 h-1 rounded-full ${
                                 step.status === "completed"
                                   ? "bg-green-500"
                                   : step.status === "error"
                                   ? "bg-red-500"
                                   : step.status === "pending"
                                   ? "bg-gray-300"
-                                  : "bg-blue-400 animate-pulse"
+                                  : "bg-indigo-400 animate-pulse"
                               }`}
                             ></div>
                             <span
                               className={`text-xs capitalize ${
                                 step.status === "completed"
-                                  ? "text-green-600 font-medium"
+                                  ? "text-green-600"
                                   : step.status === "error"
-                                  ? "text-red-600 font-medium"
+                                  ? "text-red-600"
                                   : step.status === "pending"
                                   ? "text-gray-500"
-                                  : "text-blue-600 font-medium"
+                                  : "text-indigo-600"
                               }`}
                             >
                               {step.step.replace(/_/g, " ")}
                             </span>
                             {step.status === "completed" && (
-                              <span className="text-xs text-green-600 font-bold">✓</span>
+                              <span className="text-xs text-green-600">✓</span>
                             )}
                             {step.status === "error" && (
-                              <span className="text-xs text-red-600 font-bold">✗</span>
-                            )}
-                            {step.status === "pending" && (
-                              <span className="text-xs text-gray-400">...</span>
+                              <span className="text-xs text-red-600">✗</span>
                             )}
                           </div>
                         ))}
@@ -1070,18 +1097,21 @@ export default function ContentArea() {
                     </div>
                   ))
                 ) : (
-                  <div className="bg-white rounded p-3 border border-blue-200 text-center">
-                    <DocumentTextIcon className="mx-auto h-6 w-6 text-gray-400 mb-1" />
-                    <p className="text-xs text-gray-600 font-medium">
+                  <div className="bg-gray-50 rounded-md p-3 text-center">
+                    <DocumentTextIcon className="mx-auto h-5 w-5 text-gray-400 mb-1" />
+                    <p className="text-xs text-gray-500">
                       No processing steps available
-                    </p>
-                    <p className="text-xs text-gray-400 mt-1">
-                      Upload files to see processing steps
                     </p>
                   </div>
                 )}
               </div>
+              </div>
             </div>
+          </div>
+
+          {/* Document Library */}
+          <div className="w-full max-w-2xl mt-6">
+            <DocumentLibrary refreshTrigger={documentRefreshTrigger} />
           </div>
         </div>
       </div>
@@ -1102,124 +1132,228 @@ export default function ContentArea() {
         style={{ width: `${100 - leftWidth}%` }}
       >
         {/* Chat Header */}
-        <div className="p-6 border-b border-indigo-600 bg-indigo-600">
-          <h2 className="text-xl font-semibold text-white">AI Assistant</h2>
-          <p className="text-sm text-indigo-100">
-            Ask questions about your uploaded documents
-          </p>
+        <div className="p-6 border-b border-gray-200 bg-gray-100">
+          <div>
+            <h2 className="text-xl font-semibold text-gray-800">AI Assistant</h2>
+            <p className="text-sm text-gray-600">
+              Ask questions about your uploaded documents
+            </p>
+          </div>
         </div>
 
         {/* Chat Messages Area */}
-        <div className="flex-1 p-6 overflow-y-auto">
+        <div className="flex-1 p-6 overflow-y-auto bg-white">
           <div className="space-y-4">
             {messages.length === 0 ? (
               /* Welcome Message */
-              <div className="flex items-start space-x-3">
-                <div className="w-8 h-8 bg-indigo-500 rounded-full flex items-center justify-center">
-                  <span className="text-white text-sm font-medium">AI</span>
-                </div>
-                <div className="bg-gray-100 rounded-lg p-3 max-w-xs">
-                  <p className="text-sm text-gray-900">
-                    Hello! I'm here to help you with your documents. Upload some
-                    files on the left and then ask me questions about them.
-                  </p>
+              <div className="flex justify-center animate-fade-in">
+                <div className="max-w-2xl">
+                  <div className="py-2 text-left">
+                    <p className="text-base text-gray-800 leading-relaxed whitespace-pre-wrap">
+                      Hello! I'm here to help you with your documents. Upload some
+                      files on the left and then ask me questions about them.
+                    </p>
+                  </div>
+                  <div className="text-sm text-gray-500 -mt-2 flex items-center justify-end space-x-3">
+                    <div className="flex items-center">
+                      <button className="p-2 hover:bg-gray-100 rounded transition-colors" title="Copy message">
+                        <ClipboardDocumentIcon className="h-4 w-4" />
+                      </button>
+                      <button className="p-2 hover:bg-gray-100 rounded transition-colors" title="Like">
+                        <HandThumbUpIcon className="h-4 w-4" />
+                      </button>
+                      <button className="p-2 hover:bg-gray-100 rounded transition-colors" title="Dislike">
+                        <HandThumbDownIcon className="h-4 w-4" />
+                      </button>
+                    </div>
+                    <div className="flex items-center">
+                      <div className="w-1.5 h-1.5 bg-gray-400 rounded-full mr-2"></div>
+                      Just now
+                    </div>
+                  </div>
                 </div>
               </div>
             ) : (
               /* Chat Messages */
-              messages.map((message) => (
+              messages.map((message, index) => {
+                const isUser = message.type === "user";
+                const messageTime = new Date(message.timestamp || Date.now()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                
+                return (
                 <div
                   key={message.id}
-                  className={`flex items-start space-x-3 ${
-                    message.type === "user"
-                      ? "flex-row-reverse space-x-reverse"
-                      : ""
-                  }`}
+                  className="flex justify-center animate-fade-in"
+                  style={{ animationDelay: `${index * 0.1}s` }}
                 >
-                  <div
-                    className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                      message.type === "user"
-                        ? "bg-indigo-600"
-                        : "bg-indigo-500"
-                    }`}
-                  >
-                    <span className="text-white text-sm font-medium">
-                      {message.type === "user" ? "You" : "AI"}
-                    </span>
-                  </div>
-                  <div
-                    className={`rounded-lg p-3 max-w-xs ${
-                      message.type === "user"
-                        ? "bg-indigo-600 text-white"
-                        : "bg-gray-100 text-gray-900"
-                    }`}
-                  >
-                    <p className="text-sm">
-                      {message.type === "assistant"
-                        ? typingStates[message.id]?.text || message.content
-                        : message.content}
-                      {message.type === "assistant" &&
-                        typingStates[message.id]?.isTyping && (
-                          <span className="inline-block w-0.5 h-4 bg-gray-500 ml-1 animate-pulse"></span>
-                        )}
-                    </p>
-                    {message.sources &&
-                      message.sources.length > 0 &&
-                      !typingStates[message.id]?.isTyping && (
-                        <div className="mt-2 pt-2 border-t border-gray-200">
-                          <button
-                            onClick={() => toggleSources(message.id)}
-                            className="flex items-center gap-1 text-xs text-gray-500 hover:text-indigo-600 transition-colors mb-2"
-                          >
-                            <span className="font-medium">
-                              {expandedSources[message.id] ? "Hide" : "Show"} Sources ({message.sources.length})
-                            </span>
-                            <svg
-                              className={`w-3 h-3 transition-transform ${
-                                expandedSources[message.id] ? "rotate-180" : ""
-                              }`}
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                            </svg>
-                          </button>
-                          
-                          {expandedSources[message.id] && (
-                            <div className="space-y-1 mb-2">
-                              {message.sources.map((source, index) => (
-                                <div key={index} className="text-xs text-gray-600 bg-gray-50 p-2 rounded border-l-2 border-indigo-300">
-                                  <span className="font-medium text-gray-700">{source.file_name}</span>
-                                  <span className="text-gray-500 ml-2">(chunk {source.chunk_index + 1})</span>
+                  {/* Message Content */}
+                  <div className="max-w-2xl w-full">
+                    {isUser ? (
+                      /* User Bubble */
+                      <div className="w-full">
+                        <div className="rounded-2xl p-4 shadow-sm border transition-all duration-200 hover:shadow-md bg-gradient-to-br from-indigo-500 to-indigo-600 text-white rounded-tr-md border-indigo-200">
+                          <p className="text-base leading-relaxed">
+                            {message.content}
+                          </p>
+                        </div>
+                        
+                        {/* Sources for user messages */}
+                        {message.sources &&
+                          message.sources.length > 0 &&
+                          !typingStates[message.id]?.isTyping && (
+                            <div className="mt-3 pt-3 border-t border-indigo-400/30">
+                              <button
+                                onClick={() => toggleSources(message.id)}
+                                className="flex items-center gap-2 text-xs font-medium transition-colors mb-2 text-indigo-100 hover:text-white"
+                              >
+                                <DocumentIcon className="w-3 h-3" />
+                                <span>
+                                  {expandedSources[message.id] ? "Hide" : "Show"} Sources ({message.sources.length})
+                                </span>
+                                <svg
+                                  className={`w-3 h-3 transition-transform ${
+                                    expandedSources[message.id] ? "rotate-180" : ""
+                                  }`}
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                </svg>
+                              </button>
+                              
+                              {expandedSources[message.id] && (
+                                <div className="space-y-2">
+                                  {message.sources.map((source, index) => (
+                                    <div key={index} className="text-xs p-3 rounded-lg border-l-3 bg-indigo-400/20 border-indigo-200 text-indigo-50">
+                                      <div className="font-semibold">{source.file_name}</div>
+                                      <div className="text-indigo-200">
+                                        Chunk {source.chunk_index + 1}
+                                      </div>
+                                    </div>
+                                  ))}
                                 </div>
-                              ))}
+                              )}
                             </div>
                           )}
+                        
+                        {/* Timestamp for user messages */}
+                        <div className="text-sm text-gray-500 mt-1 flex items-center justify-end space-x-3">
+                          <div className="flex items-center">
+                            <button className="p-2 hover:bg-gray-100 rounded transition-colors" title="Copy message">
+                              <ClipboardDocumentIcon className="h-4 w-4" />
+                            </button>
+                            <button className="p-2 hover:bg-gray-100 rounded transition-colors" title="Like">
+                              <HandThumbUpIcon className="h-4 w-4" />
+                            </button>
+                            <button className="p-2 hover:bg-gray-100 rounded transition-colors" title="Dislike">
+                              <HandThumbDownIcon className="h-4 w-4" />
+                            </button>
+                          </div>
+                          <div className="flex items-center">
+                            <div className="w-1.5 h-1.5 bg-gray-400 rounded-full mr-2"></div>
+                            {messageTime}
+                          </div>
                         </div>
-                      )}
+                      </div>
+                    ) : (
+                      /* AI Plain Text */
+                      <div className="w-full flex flex-col items-center">
+                        <div className="w-full max-w-2xl">
+                        <div className="py-2 text-left">
+                          <p className="text-base leading-relaxed text-gray-800 whitespace-pre-wrap">
+                            {typingStates[message.id]?.text || message.content}
+                            {typingStates[message.id]?.isTyping && (
+                              <span className="inline-block w-0.5 h-4 bg-gray-400 ml-1 animate-pulse"></span>
+                            )}
+                          </p>
+                        </div>
+                          
+                          {/* Sources */}
+                          {message.sources &&
+                            message.sources.length > 0 &&
+                            !typingStates[message.id]?.isTyping && (
+                              <div className="mt-3 pt-3 border-t border-gray-200">
+                                <button
+                                  onClick={() => toggleSources(message.id)}
+                                  className="flex items-center gap-2 text-xs font-medium transition-colors mb-2 text-gray-500 hover:text-gray-700"
+                                >
+                                  <DocumentIcon className="w-3 h-3" />
+                                  <span>
+                                    {expandedSources[message.id] ? "Hide" : "Show"} Sources ({message.sources.length})
+                                  </span>
+                                  <svg
+                                    className={`w-3 h-3 transition-transform ${
+                                      expandedSources[message.id] ? "rotate-180" : ""
+                                    }`}
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                  >
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                  </svg>
+                                </button>
+                                
+                                {expandedSources[message.id] && (
+                                  <div className="space-y-2">
+                                    {message.sources.map((source, index) => (
+                                      <div key={index} className="text-xs p-3 rounded-lg border-l-3 bg-gray-50 border-gray-300 text-gray-700">
+                                        <div className="font-semibold">{source.file_name}</div>
+                                        <div className="text-gray-500">
+                                          Chunk {source.chunk_index + 1}
+                                        </div>
+                                      </div>
+                                    ))}
+                                  </div>
+                                )}
+                              </div>
+                            )}
+                          
+                          {/* Timestamp */}
+                          <div className="text-sm text-gray-500 mt-1 flex items-center justify-end space-x-3">
+                            <div className="flex items-center">
+                              <button className="p-2 hover:bg-gray-100 rounded transition-colors" title="Copy message">
+                                <ClipboardDocumentIcon className="h-4 w-4" />
+                              </button>
+                              <button className="p-2 hover:bg-gray-100 rounded transition-colors" title="Like">
+                                <HandThumbUpIcon className="h-4 w-4" />
+                              </button>
+                              <button className="p-2 hover:bg-gray-100 rounded transition-colors" title="Dislike">
+                                <HandThumbDownIcon className="h-4 w-4" />
+                              </button>
+                            </div>
+                            <div className="flex items-center">
+                              <div className="w-1.5 h-1.5 bg-gray-400 rounded-full mr-2"></div>
+                              {messageTime}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
-              ))
+                );
+              })
             )}
 
-            {/* Loading indicator */}
+            {/* Enhanced Loading indicator */}
             {isQuerying && (
-              <div className="flex items-start space-x-3">
-                <div className="w-8 h-8 bg-indigo-500 rounded-full flex items-center justify-center">
-                  <span className="text-white text-sm font-medium">AI</span>
-                </div>
-                <div className="bg-gray-100 rounded-lg p-3">
-                  <div className="flex space-x-1">
-                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                    <div
-                      className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
-                      style={{ animationDelay: "0.1s" }}
-                    ></div>
-                    <div
-                      className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
-                      style={{ animationDelay: "0.2s" }}
-                    ></div>
+              <div className="flex justify-center animate-fade-in">
+                <div className="max-w-2xl">
+                  <div className="py-2 text-left">
+                    <div className="flex items-center space-x-2">
+                      <div className="flex space-x-1">
+                        <div className="w-2 h-2 bg-indigo-400 rounded-full animate-bounce"></div>
+                        <div
+                          className="w-2 h-2 bg-indigo-400 rounded-full animate-bounce"
+                          style={{ animationDelay: "0.1s" }}
+                        ></div>
+                        <div
+                          className="w-2 h-2 bg-indigo-400 rounded-full animate-bounce"
+                          style={{ animationDelay: "0.2s" }}
+                        ></div>
+                      </div>
+                      <span className="text-base text-gray-600 ml-3">AI is thinking...</span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1227,28 +1361,57 @@ export default function ContentArea() {
           </div>
         </div>
 
-        {/* Chat Input */}
-        <div className="p-6 border-t border-gray-200">
-          <div className="flex space-x-3">
-            <input
-              type="text"
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-              onKeyPress={handleKeyPress}
-              placeholder="Ask a question about your documents..."
-              disabled={isQuerying}
-              className="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
-            />
+        {/* Enhanced Chat Input */}
+        <div className="p-6 border-t border-gray-200 bg-white">
+          <div className="flex items-end space-x-3">
+            <div className="flex-1 relative">
+              <textarea
+                value={inputValue}
+                onChange={(e) => {
+                  setInputValue(e.target.value);
+                  // Auto-resize textarea
+                  e.target.style.height = 'auto';
+                  e.target.style.height = Math.min(e.target.scrollHeight, 120) + 'px';
+                }}
+                onKeyPress={handleKeyPress}
+                placeholder="Ask a question about your documents..."
+                disabled={isQuerying}
+                rows={1}
+                className="w-full border border-gray-300 rounded-2xl px-4 py-3 pr-12 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed resize-none transition-all duration-200 shadow-sm hover:shadow-md scrollbar-hide"
+                style={{ minHeight: '48px', maxHeight: '120px' }}
+              />
+              {inputValue.trim() && (
+                <div className="absolute right-3 bottom-3 text-xs text-gray-400">
+                  Press Enter to send
+                </div>
+              )}
+            </div>
             <button
               onClick={handleSendMessage}
               disabled={!inputValue.trim() || isQuerying}
-              className="bg-indigo-500 text-white px-4 py-2 rounded-lg hover:bg-indigo-600 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
+              className="bg-indigo-600 text-white p-3 rounded-full hover:bg-indigo-700 transition-all duration-200 disabled:bg-gray-300 disabled:cursor-not-allowed shadow-lg hover:shadow-xl transform hover:scale-110 active:scale-95 flex items-center justify-center border-2 border-white"
+              style={{ width: '52px', height: '52px' }}
             >
-              {isQuerying ? "Sending..." : "Send"}
+              {isQuerying ? (
+                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+              ) : (
+                <ArrowUpIcon className="h-5 w-5" />
+              )}
             </button>
+          </div>
+          
+          {/* Input hint */}
+          <div className="mt-2 text-xs text-gray-500 flex items-center justify-center">
+            <span>💡 Tip: Ask specific questions about your uploaded documents for better results</span>
           </div>
         </div>
       </div>
+
+      {/* Sample Documents Modal */}
+      <SampleDocsModal 
+        isOpen={showSampleDocsModal} 
+        onClose={handleCloseSampleModal} 
+      />
     </div>
   );
 }

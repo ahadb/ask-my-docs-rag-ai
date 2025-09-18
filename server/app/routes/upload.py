@@ -11,9 +11,63 @@ from app.middleware.auth import get_current_user
 
 router = APIRouter(prefix="/upload", tags=["upload"])
 
-# ... rest of your existing code
+@router.get("/documents")
+async def get_user_documents(current_user: dict = Depends(get_current_user)):
+    """Get all documents uploaded by the current user"""
+    try:
+        supabase = get_supabase_client()
+        
+        # Get all documents (for now, until user_id column is added to database)
+        documents_result = supabase.table("documents").select("*").execute()
+        
+        # For each document, get chunk count
+        documents_with_stats = []
+        for doc in documents_result.data:
+            # Get chunk count for this document
+            chunks_result = supabase.table("chunks").select("id").eq("document_id", doc["id"]).execute()
+            chunk_count = len(chunks_result.data)
+            
+            documents_with_stats.append({
+                "id": doc["id"],
+                "filename": doc["filename"],
+                "created_at": doc.get("created_at"),
+                "metadata": doc.get("metadata", {}),
+                "chunk_count": chunk_count,
+                "status": "processed"
+            })
+        
+        return {
+            "documents": documents_with_stats,
+            "total_count": len(documents_with_stats)
+        }
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to get documents: {str(e)}")
 
-router = APIRouter(prefix="/upload", tags=["upload"])
+@router.delete("/documents/{document_id}")
+async def delete_document(document_id: str, current_user: dict = Depends(get_current_user)):
+    """Delete a document and all its chunks/embeddings"""
+    try:
+        supabase = get_supabase_client()
+        
+        # Get chunks for this document
+        chunks_result = supabase.table("chunks").select("id").eq("document_id", document_id).execute()
+        chunk_ids = [chunk["id"] for chunk in chunks_result.data]
+        
+        # Delete embeddings for all chunks
+        for chunk_id in chunk_ids:
+            supabase.table("embeddings").delete().eq("chunk_id", chunk_id).execute()
+        
+        # Delete chunks
+        supabase.table("chunks").delete().eq("document_id", document_id).execute()
+        
+        # Delete document
+        supabase.table("documents").delete().eq("id", document_id).execute()
+        
+        return {"message": "Document deleted successfully", "document_id": document_id}
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to delete document: {str(e)}")
 
 @router.post("")
 async def upload_file(file: UploadFile = File(...), current_user: dict = Depends(get_current_user)):
@@ -79,7 +133,7 @@ async def upload_file(file: UploadFile = File(...), current_user: dict = Depends
         ]
 
         # 5. Store in vector DB (Supabase)
-        storage.store_embeddings(chunks, embeddings, metadata_list)
+        storage.store_embeddings(chunks, embeddings, metadata_list, current_user["user_id"])
         processing_steps[4]["status"] = "completed"  # storing_in_vector_db completed
 
         # Create chunk previews (first 2 chunks with truncated text)

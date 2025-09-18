@@ -17,7 +17,7 @@ function ProtectedRoute({ children, isAuthenticated }: { children: React.ReactNo
 }
 
 // Dashboard Layout component
-function DashboardLayout({ children }: { children: React.ReactNode }) {
+function DashboardLayout({ children, onLogout, user }: { children: React.ReactNode; onLogout: () => void; user: { id: string; email: string; full_name: string } | null }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
 
@@ -28,11 +28,14 @@ function DashboardLayout({ children }: { children: React.ReactNode }) {
       <Sidebar
         sidebarOpen={sidebarOpen}
         setSidebarOpen={setSidebarOpen}
+        onLogout={onLogout}
       />
       {showHeader && (
         <Header
           setSidebarOpen={setSidebarOpen}
           onNavigateHome={() => window.location.href = "/"}
+          onLogout={onLogout}
+          user={user}
         />
       )}
       {children}
@@ -42,13 +45,23 @@ function DashboardLayout({ children }: { children: React.ReactNode }) {
 
 export default function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [user, setUser] = useState<{ id: string; email: string; full_name: string } | null>(null);
 
-  const handleLogin = (success: boolean) => {
+  const handleLogin = (success: boolean, userData?: { id: string; email: string; full_name: string }) => {
     if (success) {
       setIsAuthenticated(true);
+      if (userData) {
+        setUser(userData);
+      }
     } else {
       setIsAuthenticated(false);
+      setUser(null);
     }
+  };
+
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+    setUser(null);
   };
 
   return (
@@ -92,7 +105,7 @@ export default function App() {
           path="/dashboard" 
           element={
             <ProtectedRoute isAuthenticated={isAuthenticated}>
-              <DashboardLayout>
+              <DashboardLayout onLogout={handleLogout} user={user}>
                 <ContentArea />
               </DashboardLayout>
             </ProtectedRoute>
@@ -104,7 +117,7 @@ export default function App() {
           path="/settings" 
           element={
             <ProtectedRoute isAuthenticated={isAuthenticated}>
-              <DashboardLayout>
+              <DashboardLayout onLogout={handleLogout} user={user}>
                 <Settings />
               </DashboardLayout>
             </ProtectedRoute>
