@@ -10,6 +10,7 @@ import {
   HandThumbUpIcon,
   HandThumbDownIcon,
   ArrowUpIcon,
+  InformationCircleIcon,
 } from "@heroicons/react/24/outline";
 import { API_URLS } from "../config";
 import { fetchWithAuth } from "../utils/auth";
@@ -24,6 +25,8 @@ export default function ContentArea() {
   const [isResizing, setIsResizing] = useState(false);
   const [chunksCreated, setChunksCreated] = useState<number>(0);
   const [showSampleDocsModal, setShowSampleDocsModal] = useState(false);
+  const [showDemoModal, setShowDemoModal] = useState(false);
+  const [activeTab, setActiveTab] = useState<'upload' | 'drive'>('upload');
 
   // Check for first-time visit (temporarily always show for testing)
   useEffect(() => {
@@ -638,7 +641,7 @@ export default function ContentArea() {
                     <DocumentTextIcon className="h-4 w-4 text-indigo-600" />
                   </div>
                   <div>
-                    <p className="text-xs font-medium text-gray-600">Documents</p>
+                    <p className="text-base font-medium text-gray-600">Documents</p>
                     <p className="text-xl font-bold text-indigo-600">{uploadedFiles.length}</p>
                   </div>
                 </div>
@@ -663,7 +666,7 @@ export default function ContentArea() {
                     </div>
                   </div>
                   <div>
-                    <p className="text-xs font-medium text-gray-600">Chunks</p>
+                    <p className="text-base font-medium text-gray-600">Chunks</p>
                     <p className="text-xl font-bold text-green-600">{chunksCreated}</p>
                   </div>
                 </div>
@@ -681,8 +684,39 @@ export default function ContentArea() {
                         </div>
           </div>
 
-          {/* Drag & Drop Area */}
-          <div className="w-full max-w-2xl mb-2">
+          {/* Data Source Tabs */}
+          <div className="w-full max-w-2xl mb-4">
+            <div className="border-b border-gray-200">
+              <nav className="-mb-px flex space-x-8">
+                <button
+                  onClick={() => setActiveTab('upload')}
+                  className={`py-2 px-1 border-b-2 font-medium text-sm transition-colors flex items-center space-x-2 ${
+                    activeTab === 'upload'
+                      ? 'border-indigo-500 text-indigo-600'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  }`}
+                >
+                  <CloudArrowUpIcon className="h-4 w-4" />
+                  <span>Upload Files</span>
+                </button>
+                <button
+                  onClick={() => setActiveTab('drive')}
+                  className={`py-2 px-1 border-b-2 font-medium text-sm transition-colors flex items-center space-x-2 ${
+                    activeTab === 'drive'
+                      ? 'border-indigo-500 text-indigo-600'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  }`}
+                >
+                  <img src="/add-to-drive.png" alt="Google Drive" className="h-4 w-4" />
+                  <span>Google Drive</span>
+                </button>
+              </nav>
+            </div>
+          </div>
+
+          {/* Tab Content */}
+          {activeTab === 'upload' && (
+            <div className="w-full max-w-2xl mb-2">
             <div
               className={`relative border-3 border-dashed rounded-xl p-8 text-center transition-all duration-300 ${
                 isDragOver
@@ -751,6 +785,39 @@ export default function ContentArea() {
               </div>
             </div>
           </div>
+          )}
+
+          {/* Google Drive Tab */}
+          {activeTab === 'drive' && (
+            <div className="w-full max-w-2xl mb-2">
+              <div className="relative border border-gray-300 rounded-xl p-8 text-center bg-white shadow-sm hover:shadow-md transition-all duration-300">
+                <div className="mb-4">
+                  <img src="/add-to-drive-large.png" alt="Google Drive" className="mx-auto" />
+                </div>
+                
+                <div className="text-lg font-medium text-gray-800 mb-2">
+                  Connect Google Drive
+                </div>
+                
+                <div className="text-base text-gray-600 mb-6">
+                  <p className="mb-2">
+                    Access your documents directly from Google Drive
+                  </p>
+                </div>
+                
+                <button 
+                  disabled={true}
+                  className="bg-gray-300 text-gray-500 px-4 py-2 rounded-lg cursor-not-allowed font-medium shadow-sm"
+                >
+                  Connect to Google Drive (Demo)
+                </button>
+                
+                <div className="mt-4 text-sm text-gray-500">
+                  <p>We'll only access documents you specifically select</p>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Uploaded Files List */}
           <div className="w-full max-w-2xl mb-4">
@@ -1132,7 +1199,7 @@ export default function ContentArea() {
         style={{ width: `${100 - leftWidth}%` }}
       >
         {/* Chat Header */}
-        <div className="p-6 border-b border-gray-200 bg-gray-100">
+        <div className="p-6 border-b border-gray-300 bg-gray-100">
           <div>
             <h2 className="text-xl font-semibold text-gray-800">AI Assistant</h2>
             <p className="text-sm text-gray-600">
@@ -1412,6 +1479,101 @@ export default function ContentArea() {
         isOpen={showSampleDocsModal} 
         onClose={handleCloseSampleModal} 
       />
+
+      {/* Demo Features Modal */}
+      {showDemoModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+          <div className="relative bg-white rounded-lg shadow-2xl border border-gray-300 max-w-md w-full max-h-[90vh] overflow-y-auto m-4">
+            <div className="p-6">
+              {/* Header */}
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-semibold text-gray-900">Demo Features</h2>
+                <button
+                  onClick={() => setShowDemoModal(false)}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  <XMarkIcon className="h-5 w-5" />
+                </button>
+              </div>
+
+              {/* Available Features */}
+              <div className="mb-6">
+                <h3 className="text-sm font-medium text-gray-700 mb-3">✅ Available in Demo</h3>
+                <div className="space-y-2">
+                  <div className="flex items-center text-sm text-gray-600">
+                    <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
+                    Document upload (PDF, DOCX)
+                  </div>
+                  <div className="flex items-center text-sm text-gray-600">
+                    <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
+                    AI-powered document chat
+                  </div>
+                  <div className="flex items-center text-sm text-gray-600">
+                    <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
+                    Semantic search with sources
+                  </div>
+                  <div className="flex items-center text-sm text-gray-600">
+                    <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
+                    Document library management
+                  </div>
+                </div>
+              </div>
+
+              {/* Limited Features */}
+              <div className="mb-6">
+                <h3 className="text-sm font-medium text-gray-700 mb-3">⚠️ Demo Limitations</h3>
+                <div className="space-y-2">
+                  <div className="flex items-center text-sm text-gray-500">
+                    <div className="w-2 h-2 bg-yellow-500 rounded-full mr-3"></div>
+                    Max 3 documents per session
+                  </div>
+                  <div className="flex items-center text-sm text-gray-500">
+                    <div className="w-2 h-2 bg-yellow-500 rounded-full mr-3"></div>
+                    Chat history not saved
+                  </div>
+                  <div className="flex items-center text-sm text-gray-500">
+                    <div className="w-2 h-2 bg-yellow-500 rounded-full mr-3"></div>
+                    50MB file size limit
+                  </div>
+                </div>
+              </div>
+
+              {/* Pro Features */}
+              <div className="mb-6">
+                <h3 className="text-sm font-medium text-gray-700 mb-3">🚀 Pro Features</h3>
+                <div className="space-y-2">
+                  <div className="flex items-center text-sm text-gray-400">
+                    <div className="w-2 h-2 bg-gray-300 rounded-full mr-3"></div>
+                    Unlimited documents
+                  </div>
+                  <div className="flex items-center text-sm text-gray-400">
+                    <div className="w-2 h-2 bg-gray-300 rounded-full mr-3"></div>
+                    Persistent chat history
+                  </div>
+                  <div className="flex items-center text-sm text-gray-400">
+                    <div className="w-2 h-2 bg-gray-300 rounded-full mr-3"></div>
+                    Advanced AI models
+                  </div>
+                  <div className="flex items-center text-sm text-gray-400">
+                    <div className="w-2 h-2 bg-gray-300 rounded-full mr-3"></div>
+                    Team collaboration
+                  </div>
+                </div>
+              </div>
+
+              {/* Action Button */}
+              <div className="flex justify-center">
+                <button
+                  onClick={() => setShowDemoModal(false)}
+                  className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition-colors"
+                >
+                  Continue with Demo
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

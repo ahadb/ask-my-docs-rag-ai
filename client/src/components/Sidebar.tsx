@@ -1,4 +1,4 @@
-import { Fragment } from "react";
+import { Fragment, useState, useRef, useEffect } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
@@ -6,6 +6,10 @@ import {
   Cog6ToothIcon,
   DocumentTextIcon,
   ArrowRightOnRectangleIcon,
+  EllipsisHorizontalIcon,
+  StarIcon,
+  TrashIcon,
+  PencilIcon,
 } from "@heroicons/react/24/outline";
 import { clearAuthToken } from "../utils/auth";
 
@@ -22,11 +26,34 @@ export default function Sidebar({
 }: SidebarProps) {
   const navigate = useNavigate();
   const location = useLocation();
+  const [openChatMenu, setOpenChatMenu] = useState<string | null>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
   
   const navigation = [
     { name: "Dashboard", href: "/dashboard", icon: DocumentTextIcon },
     { name: "Settings", href: "/settings", icon: Cog6ToothIcon },
   ];
+
+  // Mock recent chats data
+  const recentChats = [
+    { id: "1", title: "Employee handbook questions", time: "2 hours ago" },
+    { id: "2", title: "Policy document analysis", time: "Yesterday" },
+    { id: "3", title: "Contract review session", time: "3 days ago" },
+  ];
+
+  // Close menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setOpenChatMenu(null);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   const handleNavigation = (href: string) => {
     navigate(href);
@@ -110,7 +137,7 @@ export default function Sidebar({
                                 onClick={() => handleNavigation(item.href)}
                                 className={classNames(
                                   isCurrentPage(item.href)
-                                    ? "bg-indigo-50 text-indigo-600"
+                                    ? "bg-gray-200 text-indigo-600"
                                     : "text-gray-700 hover:bg-gray-50 hover:text-indigo-600",
                                   "group flex gap-x-3 rounded-md p-2 text-sm font-semibold w-full text-left cursor-pointer"
                                 )}
@@ -144,8 +171,8 @@ export default function Sidebar({
       </Transition.Root>
 
       {/* Static sidebar for desktop */}
-      <div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
-        <div className="flex grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-white px-6 pb-4">
+      <div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-70 lg:flex-col">
+        <div className="flex grow flex-col gap-y-5 overflow-y-auto border-r border-gray-300 bg-gray-100 px-6 pb-4">
           <div className="flex h-16 shrink-0 items-center">
             <div className="flex items-center">
               <h1 className="text-xl font-bold text-gray-900">DocChat</h1>
@@ -161,9 +188,9 @@ export default function Sidebar({
                         onClick={() => handleNavigation(item.href)}
                         className={classNames(
                           isCurrentPage(item.href)
-                            ? "bg-indigo-50 text-indigo-600"
+                            ? "bg-gray-200 text-indigo-600"
                             : "text-gray-700 hover:bg-gray-50 hover:text-indigo-600",
-                          "group flex gap-x-3 rounded-md p-2 text-sm font-semibold w-full text-left cursor-pointer"
+                          "group flex gap-x-3 rounded-md p-2 text-base font-semibold w-full text-left cursor-pointer"
                         )}
                       >
                         <item.icon
@@ -185,6 +212,56 @@ export default function Sidebar({
                   ))}
                 </ul>
               </li>
+              
+              {/* Recent Chats Section */}
+              <li>
+                <div className="text-xs font-semibold leading-6 text-gray-500 mb-2">Recent Chats</div>
+                <ul role="list" className="-mx-2 space-y-1">
+                  {recentChats.map((chat) => (
+                    <li key={chat.id} className="relative">
+                      <div className="group flex items-center justify-between rounded-md p-2 text-sm hover:bg-gray-50">
+                        <button className="flex-1 min-w-0 text-left">
+                          <p className="text-base text-gray-700 truncate">{chat.title}</p>
+                          <p className="text-sm text-gray-500">{chat.time}</p>
+                        </button>
+                        
+                        <div className="relative" ref={openChatMenu === chat.id ? menuRef : null}>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setOpenChatMenu(openChatMenu === chat.id ? null : chat.id);
+                            }}
+                            className="p-1.5 text-gray-400 hover:text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity"
+                          >
+                            <EllipsisHorizontalIcon className="h-5 w-5" />
+                          </button>
+                          
+                          {/* Flyout Menu */}
+                          {openChatMenu === chat.id && (
+                            <div className="absolute right-0 top-8 w-36 bg-white border border-gray-200 rounded-md shadow-lg z-10">
+                              <div className="py-1">
+                                <button className="flex items-center w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                                  <StarIcon className="h-4 w-4 mr-2" />
+                                  Star
+                                </button>
+                                <button className="flex items-center w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                                  <PencilIcon className="h-4 w-4 mr-2" />
+                                  Rename
+                                </button>
+                                <button className="flex items-center w-full px-3 py-2 text-sm text-red-600 hover:bg-red-50">
+                                  <TrashIcon className="h-4 w-4 mr-2" />
+                                  Delete
+                                </button>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </li>
+              
               <li className="mt-auto">
                 <button
                   onClick={() => {

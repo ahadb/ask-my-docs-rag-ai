@@ -359,11 +359,11 @@ export default function Settings() {
             </button>
             <button
               type="button"
-              onClick={saveSettings}
-              disabled={isSaving}
-              className="px-6 py-2.5 bg-emerald-500 text-white rounded-md hover:bg-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-500 disabled:opacity-50 transition-all duration-200 font-medium"
+              onClick={() => {}}
+              disabled={true}
+              className="px-6 py-2.5 bg-gray-300 text-gray-500 rounded-md cursor-not-allowed disabled:opacity-50 transition-all duration-200 font-medium"
             >
-              {isSaving ? "Saving..." : "Save Settings"}
+              Save Settings (Demo)
             </button>
           </div>
         </form>

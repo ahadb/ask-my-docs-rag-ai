@@ -1,6 +1,6 @@
 import { Bars3Icon } from "@heroicons/react/24/outline";
 import { HomeIcon } from "@heroicons/react/24/outline";
-import { UserCircleIcon, ArrowRightOnRectangleIcon, ChevronDownIcon, Cog6ToothIcon } from "@heroicons/react/24/outline";
+import { UserCircleIcon, ArrowRightOnRectangleIcon, ChevronDownIcon, Cog6ToothIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { clearAuthToken } from "../utils/auth";
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -10,6 +10,8 @@ interface HeaderProps {
   onNavigateHome?: () => void;
   onLogout?: () => void;
   user?: { id: string; email: string; full_name: string } | null;
+  showDemoModal: boolean;
+  setShowDemoModal: (show: boolean) => void;
 }
 
 export default function Header({
@@ -17,6 +19,8 @@ export default function Header({
   onNavigateHome,
   onLogout,
   user,
+  showDemoModal,
+  setShowDemoModal,
 }: HeaderProps) {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
@@ -76,7 +80,7 @@ export default function Header({
     };
   }, []);
   return (
-    <div className="sticky top-0 z-40 flex h-12 shrink-0 items-center gap-x-3 border-b border-gray-200 bg-white px-3 shadow-sm sm:gap-x-4 sm:px-4 lg:px-6">
+    <div className="sticky top-0 z-40 flex h-12 shrink-0 items-center gap-x-3 border-b border-gray-200 bg-white px-3 shadow-sm sm:gap-x-4 sm:px-4 lg:px-6 lg:pl-72">
       <button
         type="button"
         className="-m-2.5 p-2.5 text-gray-700 lg:hidden"
@@ -90,16 +94,20 @@ export default function Header({
       <div className="h-5 w-px bg-gray-200 lg:hidden" aria-hidden="true" />
 
       <div className="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
+        {/* Demo Badge - Far Left */}
+        <div className="flex items-center">
+          <button 
+            onClick={() => setShowDemoModal(true)}
+            className="bg-indigo-50 text-indigo-700 text-xs font-semibold px-3 ml-2 py-1 rounded-full shadow-sm border border-indigo-200 hover:bg-indigo-100 transition-colors animate-pulse cursor-pointer"
+          >
+            DEMO
+          </button>
+        </div>
+        
         <div className="flex flex-1 items-center justify-between">
           <div className="flex items-center gap-x-4">
             {onNavigateHome && (
-              <button
-                onClick={onNavigateHome}
-                className="inline-flex items-center gap-x-2 rounded-md bg-indigo-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 transition-colors duration-200"
-              >
-                <HomeIcon className="h-4 w-4" />
-                Home
-              </button>
+              <></>
             )}
           </div>
 
@@ -184,6 +192,7 @@ export default function Header({
           </div>
         </div>
       </div>
+
     </div>
   );
 }

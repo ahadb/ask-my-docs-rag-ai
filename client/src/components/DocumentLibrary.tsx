@@ -90,7 +90,7 @@ export default function DocumentLibrary({ refreshTrigger }: DocumentLibraryProps
 
   const getFileIcon = (filename: string) => {
     if (filename.endsWith('.pdf')) {
-      return <DocumentIcon className="h-6 w-6 text-red-600" />;
+      return <img src="/pdf-icon-sm.png" alt="PDF" className="h-12 w-12" />;
     }
     if (filename.endsWith('.docx')) {
       return <DocumentTextIcon className="h-6 w-6 text-blue-600" />;
@@ -143,7 +143,7 @@ export default function DocumentLibrary({ refreshTrigger }: DocumentLibraryProps
                 <div className="flex items-center space-x-3">
                   {getFileIcon(doc.filename)}
                   <div className="flex-1 min-w-0">
-                    <h3 className="text-sm font-medium text-gray-900 truncate">
+                    <h3 className="text-base font-medium text-gray-900 truncate">
                       {doc.filename}
                     </h3>
                     <div className="flex items-center space-x-3 mt-1">
@@ -154,7 +154,7 @@ export default function DocumentLibrary({ refreshTrigger }: DocumentLibraryProps
                       <span className="text-xs text-gray-500">
                         {doc.chunk_count} chunks
                       </span>
-                      <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium border ${
+                      <span className={`inline-flex items-center px-2 py-1 rounded-md text-xs font-medium border ${
                         doc.status === 'processed' 
                           ? 'bg-green-50 text-green-700 border-green-300' 
                           : 'bg-yellow-50 text-yellow-700 border-yellow-200'
