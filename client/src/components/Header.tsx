@@ -1,6 +1,6 @@
 import { Bars3Icon } from "@heroicons/react/24/outline";
 import { HomeIcon } from "@heroicons/react/24/outline";
-import { UserCircleIcon, ArrowRightOnRectangleIcon, ChevronDownIcon, Cog6ToothIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { ArrowRightOnRectangleIcon, ChevronDownIcon, Cog6ToothIcon } from "@heroicons/react/24/outline";
 import { clearAuthToken } from "../utils/auth";
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -19,7 +19,6 @@ export default function Header({
   onNavigateHome,
   onLogout,
   user,
-  showDemoModal,
   setShowDemoModal,
 }: HeaderProps) {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);

@@ -27,7 +27,7 @@ export default function SignUp({ onLogin, isAuthenticated }: SignUpProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [, setIsLoading] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -176,7 +176,7 @@ export default function SignUp({ onLogin, isAuthenticated }: SignUpProps) {
             <div className="bg-white border border-gray-300 rounded-lg p-8 flex-1">
               <div className="mb-6">
                 <h1 className="text-2xl font-bold text-gray-900 flex items-center">
-                  Create account
+                  Create account <span className="text-xl text-gray-500 font-normal">(Disabled for Demo)</span>
                   <InformationCircleIcon className="ml-2 h-5 w-5 text-blue-500" />
                 </h1>
                 <p className="text-sm text-gray-600 mt-2">
@@ -196,9 +196,10 @@ export default function SignUp({ onLogin, isAuthenticated }: SignUpProps) {
                       name="firstName"
                       type="text"
                       required
+                      disabled={true}
                       value={formData.firstName}
                       onChange={handleInputChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-100 text-gray-500 cursor-not-allowed"
                       placeholder="Enter first name"
                     />
                   </div>
@@ -211,9 +212,10 @@ export default function SignUp({ onLogin, isAuthenticated }: SignUpProps) {
                       name="lastName"
                       type="text"
                       required
+                      disabled={true}
                       value={formData.lastName}
                       onChange={handleInputChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-100 text-gray-500 cursor-not-allowed"
                       placeholder="Enter last name"
                     />
                   </div>
@@ -229,9 +231,10 @@ export default function SignUp({ onLogin, isAuthenticated }: SignUpProps) {
                     name="email"
                     type="email"
                     required
+                    disabled={true}
                     value={formData.email}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-100 text-gray-500 cursor-not-allowed"
                     placeholder="Enter email address"
                   />
                 </div>
@@ -246,6 +249,7 @@ export default function SignUp({ onLogin, isAuthenticated }: SignUpProps) {
                     name="username"
                     type="text"
                     required
+                    disabled={true}
                     value={formData.username}
                     onChange={handleInputChange}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -264,9 +268,10 @@ export default function SignUp({ onLogin, isAuthenticated }: SignUpProps) {
                       name="password"
                       type={showPassword ? "text" : "password"}
                       required
+                      disabled={true}
                       value={formData.password}
                       onChange={handleInputChange}
-                      className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-md shadow-sm bg-gray-100 text-gray-500 cursor-not-allowed"
                       placeholder="Create a password"
                     />
                     <button
@@ -301,9 +306,10 @@ export default function SignUp({ onLogin, isAuthenticated }: SignUpProps) {
                       name="confirmPassword"
                       type={showConfirmPassword ? "text" : "password"}
                       required
+                      disabled={true}
                       value={formData.confirmPassword}
                       onChange={handleInputChange}
-                      className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-md shadow-sm bg-gray-100 text-gray-500 cursor-not-allowed"
                       placeholder="Confirm your password"
                     />
                     <button
@@ -336,17 +342,10 @@ export default function SignUp({ onLogin, isAuthenticated }: SignUpProps) {
                 <div className="space-y-3">
                   <button
                     type="submit"
-                    disabled={isLoading}
-                    className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                    disabled={true}
+                    className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-gray-500 bg-gray-300 cursor-not-allowed"
                   >
-                    {isLoading ? (
-                      <div className="flex items-center">
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                        Creating account...
-                      </div>
-                    ) : (
-                      "Create account"
-                    )}
+                    Create account (Demo)
                   </button>
                 </div>
 

@@ -23,8 +23,8 @@ export default function SignIn({ onLogin, isAuthenticated }: SignInProps) {
   const [isLoading, setIsLoading] = useState(false);
 
   // Hardcoded credentials
-  const DEMO_USERNAME = "demo";
-  const DEMO_PASSWORD = "SecurePass123!";
+  // const DEMO_USERNAME = "demo";
+  // const DEMO_PASSWORD = "SecurePass123!";
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();

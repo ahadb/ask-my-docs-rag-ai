@@ -4,13 +4,10 @@ import {
   DocumentIcon,
   XMarkIcon,
   DocumentTextIcon,
-  PaperAirplaneIcon,
-  SparklesIcon,
   ClipboardDocumentIcon,
   HandThumbUpIcon,
   HandThumbDownIcon,
   ArrowUpIcon,
-  InformationCircleIcon,
 } from "@heroicons/react/24/outline";
 import { API_URLS } from "../config";
 import { fetchWithAuth } from "../utils/auth";
@@ -28,18 +25,20 @@ export default function ContentArea() {
   const [showDemoModal, setShowDemoModal] = useState(false);
   const [activeTab, setActiveTab] = useState<'upload' | 'drive'>('upload');
 
-  // Check for first-time visit (temporarily always show for testing)
+  // Check for first-time visit in this session
   useEffect(() => {
-    const hasSeenSampleDocs = localStorage.getItem('hasSeenSampleDocs');
-    console.log('hasSeenSampleDocs:', hasSeenSampleDocs);
-    // Temporarily always show modal for testing
-    console.log('Showing sample docs modal (testing mode)');
-    setShowSampleDocsModal(true);
+    const hasSeenSampleDocsThisSession = sessionStorage.getItem('hasSeenSampleDocsThisSession');
+    console.log('hasSeenSampleDocsThisSession:', hasSeenSampleDocsThisSession);
+    
+    if (!hasSeenSampleDocsThisSession) {
+      console.log('Showing sample docs modal (first time this session)');
+      setShowSampleDocsModal(true);
+    }
   }, []);
 
   const handleCloseSampleModal = () => {
     setShowSampleDocsModal(false);
-    localStorage.setItem('hasSeenSampleDocs', 'true');
+    sessionStorage.setItem('hasSeenSampleDocsThisSession', 'true');
   };
 
   
@@ -1324,8 +1323,7 @@ export default function ContentArea() {
                       </div>
                     ) : (
                       /* AI Plain Text */
-                      <div className="w-full flex flex-col items-center">
-                        <div className="w-full max-w-2xl">
+                      <div className="w-full">
                         <div className="py-2 text-left">
                           <p className="text-base leading-relaxed text-gray-800 whitespace-pre-wrap">
                             {typingStates[message.id]?.text || message.content}
@@ -1333,66 +1331,76 @@ export default function ContentArea() {
                               <span className="inline-block w-0.5 h-4 bg-gray-400 ml-1 animate-pulse"></span>
                             )}
                           </p>
+                          
+                          {/* Inline Source Citation */}
+                          {message.sources && message.sources.length > 0 && !typingStates[message.id]?.isTyping && (
+                            <p className="text-sm text-gray-500 mt-3">
+                              Source: <span className="font-medium text-gray-700">{message.sources[0].file_name}</span>
+                            </p>
+                          )}
                         </div>
-                          
-                          {/* Sources */}
-                          {message.sources &&
-                            message.sources.length > 0 &&
-                            !typingStates[message.id]?.isTyping && (
-                              <div className="mt-3 pt-3 border-t border-gray-200">
-                                <button
-                                  onClick={() => toggleSources(message.id)}
-                                  className="flex items-center gap-2 text-xs font-medium transition-colors mb-2 text-gray-500 hover:text-gray-700"
+                        
+                        {/* Sources and Actions Row */}
+                        <div className="mt-3 pt-3 border-t border-gray-200">
+                          <div className="flex items-center justify-between mb-2">
+                            {/* Show All Sources Button */}
+                            {message.sources && message.sources.length > 0 && !typingStates[message.id]?.isTyping ? (
+                              <button
+                                onClick={() => toggleSources(message.id)}
+                                className="flex items-center gap-2 text-xs font-medium transition-colors text-gray-500 hover:text-gray-700"
+                              >
+                                <DocumentIcon className="w-3 h-3" />
+                                <span>
+                                  {expandedSources[message.id] ? "Hide" : "Show All"} Sources ({message.sources.length})
+                                </span>
+                                <svg
+                                  className={`w-3 h-3 transition-transform ${
+                                    expandedSources[message.id] ? "rotate-180" : ""
+                                  }`}
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
                                 >
-                                  <DocumentIcon className="w-3 h-3" />
-                                  <span>
-                                    {expandedSources[message.id] ? "Hide" : "Show"} Sources ({message.sources.length})
-                                  </span>
-                                  <svg
-                                    className={`w-3 h-3 transition-transform ${
-                                      expandedSources[message.id] ? "rotate-180" : ""
-                                    }`}
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                  >
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                                  </svg>
-                                </button>
-                                
-                                {expandedSources[message.id] && (
-                                  <div className="space-y-2">
-                                    {message.sources.map((source, index) => (
-                                      <div key={index} className="text-xs p-3 rounded-lg border-l-3 bg-gray-50 border-gray-300 text-gray-700">
-                                        <div className="font-semibold">{source.file_name}</div>
-                                        <div className="text-gray-500">
-                                          Chunk {source.chunk_index + 1}
-                                        </div>
-                                      </div>
-                                    ))}
-                                  </div>
-                                )}
-                              </div>
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                </svg>
+                              </button>
+                            ) : (
+                              <div></div>
                             )}
-                          
-                          {/* Timestamp */}
-                          <div className="text-sm text-gray-500 mt-1 flex items-center justify-end space-x-3">
-                            <div className="flex items-center">
-                              <button className="p-2 hover:bg-gray-100 rounded transition-colors" title="Copy message">
-                                <ClipboardDocumentIcon className="h-4 w-4" />
-                              </button>
-                              <button className="p-2 hover:bg-gray-100 rounded transition-colors" title="Like">
-                                <HandThumbUpIcon className="h-4 w-4" />
-                              </button>
-                              <button className="p-2 hover:bg-gray-100 rounded transition-colors" title="Dislike">
-                                <HandThumbDownIcon className="h-4 w-4" />
-                              </button>
-                            </div>
-                            <div className="flex items-center">
-                              <div className="w-1.5 h-1.5 bg-gray-400 rounded-full mr-2"></div>
-                              {messageTime}
+                            
+                            {/* Action Buttons and Timestamp */}
+                            <div className="text-sm text-gray-500 flex items-center space-x-3">
+                              <div className="flex items-center">
+                                <button className="p-2 hover:bg-gray-100 rounded transition-colors" title="Copy message">
+                                  <ClipboardDocumentIcon className="h-4 w-4" />
+                                </button>
+                                <button className="p-2 hover:bg-gray-100 rounded transition-colors" title="Like">
+                                  <HandThumbUpIcon className="h-4 w-4" />
+                                </button>
+                                <button className="p-2 hover:bg-gray-100 rounded transition-colors" title="Dislike">
+                                  <HandThumbDownIcon className="h-4 w-4" />
+                                </button>
+                              </div>
+                              <div className="flex items-center">
+                                <div className="w-1.5 h-1.5 bg-gray-400 rounded-full mr-2"></div>
+                                {messageTime}
+                              </div>
                             </div>
                           </div>
+                          
+                          {/* Expanded Sources */}
+                          {message.sources && message.sources.length > 0 && expandedSources[message.id] && (
+                            <div className="space-y-2">
+                              {message.sources.map((source, index) => (
+                                <div key={index} className="text-xs p-3 rounded-lg border-l-3 bg-gray-50 border-gray-300 text-gray-700">
+                                  <div className="font-semibold">{source.file_name}</div>
+                                  <div className="text-gray-500">
+                                    Chunk {source.chunk_index + 1}
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          )}
                         </div>
                       </div>
                     )}

@@ -3,10 +3,8 @@ import {
   XMarkIcon,
   DocumentTextIcon,
   ArrowDownTrayIcon,
-  SparklesIcon,
   BuildingOfficeIcon,
   CogIcon,
-  ScaleIcon,
   ChartBarIcon,
 } from "@heroicons/react/24/outline";
 
@@ -33,47 +31,36 @@ export default function SampleDocsModal({ isOpen, onClose }: SampleDocsModalProp
   const sampleDocuments: SampleDocument[] = [
     {
       id: "employee-handbook",
-      title: "Employee Handbook",
+      title: "DocChat Employee Handbook",
       description: "Complete HR policies, benefits, vacation rules, and workplace guidelines",
       fileType: "PDF",
       category: "Human Resources",
       icon: BuildingOfficeIcon,
       color: "bg-blue-500",
       size: "2.3 MB",
-      downloadUrl: "/sample_docs/AcmeTech_Employee_Handbook.pdf"
+      downloadUrl: "/DocChat Employee Handbook.pdf"
     },
     {
       id: "technical-guide",
-      title: "RAG Technical Guide",
+      title: "RAG Technology Overview",
       description: "AI architecture, vector databases, embedding models, and implementation details",
       fileType: "PDF",
       category: "Technology",
       icon: CogIcon,
       color: "bg-purple-500",
       size: "1.8 MB",
-      downloadUrl: "/sample_docs/RAG_Technical_Guide.pdf"
+      downloadUrl: "/RAG Technology Overview.pdf"
     },
     {
-      id: "legal-terms",
-      title: "Legal & Compliance",
-      description: "Terms of service, privacy policies, data protection, and regulatory compliance",
-      fileType: "DOCX",
-      category: "Legal",
-      icon: ScaleIcon,
-      color: "bg-green-500",
-      size: "1.2 MB",
-      downloadUrl: "/sample_docs/Legal_Compliance.docx"
-    },
-    {
-      id: "marketing-strategy",
-      title: "Marketing Strategy",
-      description: "Business plans, market analysis, customer segments, and growth strategies",
+      id: "market-report",
+      title: "AI Assistant Market Report 2025",
+      description: "Market analysis, industry trends, customer segments, and growth opportunities",
       fileType: "PDF",
       category: "Business",
       icon: ChartBarIcon,
       color: "bg-orange-500",
       size: "2.1 MB",
-      downloadUrl: "/sample_docs/Marketing_Strategy.pdf"
+      downloadUrl: "/AI Assistant Market Report 2025.pdf"
     }
   ];
 
@@ -132,7 +119,7 @@ export default function SampleDocsModal({ isOpen, onClose }: SampleDocsModalProp
           </div>
 
           {/* Sample Documents Row */}
-          <div className="grid grid-cols-4 gap-4 mb-6">
+          <div className="grid grid-cols-3 gap-6 mb-6">
             {sampleDocuments.map((doc) => {
               const IconComponent = doc.icon;
               const isDownloading = downloading === doc.id;

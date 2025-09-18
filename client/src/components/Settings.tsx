@@ -25,7 +25,7 @@ export default function Settings() {
     batch_processing: true,
   });
   const [isLoading, setIsLoading] = useState(true);
-  const [isSaving, setIsSaving] = useState(false);
+  // const [, setIsSaving] = useState(false);
   const [message, setMessage] = useState("");
 
   useEffect(() => {
@@ -46,31 +46,31 @@ export default function Settings() {
     }
   };
 
-  const saveSettings = async () => {
-    setIsSaving(true);
-    setMessage("");
+  // const saveSettings = async () => {
+  //   setIsSaving(true);
+  //   setMessage("");
 
-    try {
-      const response = await fetchWithAuth(API_URLS.SETTINGS, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(settings),
-      });
+  //   try {
+  //     const response = await fetchWithAuth(API_URLS.SETTINGS, {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify(settings),
+  //     });
 
-      if (response.ok) {
-        setMessage("Settings saved successfully!");
-      } else {
-        const error = await response.json();
-        setMessage(`Error: ${error.detail}`);
-      }
-    } catch (error) {
-      setMessage("Error saving settings");
-    } finally {
-      setIsSaving(false);
-    }
-  };
+  //     if (response.ok) {
+  //       setMessage("Settings saved successfully!");
+  //     } else {
+  //       const error = await response.json();
+  //       setMessage(`Error: ${error.detail}`);
+  //     }
+  //   } catch (error) {
+  //     setMessage("Error saving settings");
+  //   } finally {
+  //     setIsSaving(false);
+  //   }
+  // };
 
   const resetSettings = async () => {
     try {
@@ -113,7 +113,7 @@ export default function Settings() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="text-left">
             <h1 className="text-4xl font-bold text-gray-900">
-              Settings
+              Settings <span className="text-2xl text-gray-500 font-normal">(Disabled for Demo)</span>
             </h1>
           </div>
         </div>
@@ -157,7 +157,8 @@ export default function Settings() {
                   onChange={(e) =>
                     handleInputChange("chunk_size", parseInt(e.target.value))
                   }
-                  className="w-full px-3 py-1.5 border border-gray-300 rounded-lg bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent focus:bg-white transition-all duration-200"
+                  className="w-full px-3 py-1.5 border border-gray-300 rounded-lg bg-gray-100 text-gray-500 cursor-not-allowed"
+                  disabled={true}
                   min="100"
                   max="5000"
                 />
@@ -176,7 +177,8 @@ export default function Settings() {
                   onChange={(e) =>
                     handleInputChange("chunk_overlap", parseInt(e.target.value))
                   }
-                  className="w-full px-3 py-1.5 border border-gray-300 rounded-lg bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent focus:bg-white transition-all duration-200"
+                  className="w-full px-3 py-1.5 border border-gray-300 rounded-lg bg-gray-100 text-gray-500 cursor-not-allowed"
+                  disabled={true}
                   min="0"
                   max={settings.chunk_size - 100}
                 />
@@ -205,7 +207,8 @@ export default function Settings() {
                   onChange={(e) =>
                     handleInputChange("top_k_retrieval", parseInt(e.target.value))
                   }
-                  className="w-full px-3 py-1.5 border border-gray-300 rounded-lg bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent focus:bg-white transition-all duration-200"
+                  className="w-full px-3 py-1.5 border border-gray-300 rounded-lg bg-gray-100 text-gray-500 cursor-not-allowed"
+                  disabled={true}
                   min="1"
                   max="100"
                 />
@@ -224,7 +227,8 @@ export default function Settings() {
                   onChange={(e) =>
                     handleInputChange("temperature", parseFloat(e.target.value))
                   }
-                  className="w-full px-3 py-1.5 border border-gray-300 rounded-lg bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent focus:bg-white transition-all duration-200"
+                  className="w-full px-3 py-1.5 border border-gray-300 rounded-lg bg-gray-100 text-gray-500 cursor-not-allowed"
+                  disabled={true}
                   min="0"
                   max="2"
                   step="0.1"
@@ -254,7 +258,8 @@ export default function Settings() {
                   onChange={(e) =>
                     handleInputChange("typewriter_speed", parseInt(e.target.value))
                   }
-                  className="w-full px-3 py-1.5 border border-gray-300 rounded-lg bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent focus:bg-white transition-all duration-200"
+                  className="w-full px-3 py-1.5 border border-gray-300 rounded-lg bg-gray-100 text-gray-500 cursor-not-allowed"
+                  disabled={true}
                   min="10"
                   max="200"
                 />
@@ -270,7 +275,8 @@ export default function Settings() {
                 <select
                   value={settings.theme}
                   onChange={(e) => handleInputChange("theme", e.target.value)}
-                  className="w-full px-3 py-1.5 border border-gray-300 rounded-lg bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent focus:bg-white transition-all duration-200"
+                  className="w-full px-3 py-1.5 border border-gray-300 rounded-lg bg-gray-100 text-gray-500 cursor-not-allowed"
+                  disabled={true}
                 >
                   <option value="light">Light</option>
                   <option value="dark">Dark</option>

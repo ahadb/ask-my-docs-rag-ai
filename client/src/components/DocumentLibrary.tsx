@@ -98,7 +98,7 @@ export default function DocumentLibrary({ refreshTrigger }: DocumentLibraryProps
     return <DocumentIcon className="h-6 w-6 text-gray-500" />;
   };
 
-  const getFileCardStyle = (filename: string) => {
+  const getFileCardStyle = () => {
     return "border border-gray-300 hover:border-gray-400";
   };
 
@@ -138,7 +138,7 @@ export default function DocumentLibrary({ refreshTrigger }: DocumentLibraryProps
             {(showAll ? documents : documents.slice(0, 3)).map((doc) => (
               <div
                 key={doc.id}
-                className={`flex items-center justify-between p-3 rounded-lg transition-colors ${getFileCardStyle(doc.filename)}`}
+                className={`flex items-center justify-between p-3 rounded-lg transition-colors ${getFileCardStyle()}`}
               >
                 <div className="flex items-center space-x-3">
                   {getFileIcon(doc.filename)}
