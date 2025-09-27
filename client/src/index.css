@@ -1,4 +1,6 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Source+Serif+Pro:ital,wght@0,400;0,600;1,400&display=swap');
 
 /* Chat animations */
 @keyframes fade-in {
@@ -38,4 +40,98 @@
 
 .scrollbar-hide::-webkit-scrollbar {
   display: none;  /* Safari and Chrome */
+}
+
+/* Serif font for chat messages */
+.chat-serif {
+  font-family: 'Source Serif Pro', serif;
+  font-size: 20px;
+  line-height: 1.4;
+  color: #374151;
+  font-weight: 400;
+}
+
+.chat-serif strong {
+  font-weight: 600;
+}
+
+/* Enhanced markdown styling for better readability */
+.chat-serif p {
+  margin-top: 0.75rem;
+  margin-bottom: 0.75rem;
+  line-height: 1.6;
+}
+
+.chat-serif p:first-child {
+  margin-top: 0;
+}
+
+.chat-serif p:last-child {
+  margin-bottom: 0;
+}
+
+.chat-serif ul, .chat-serif ol {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  padding-left: 1.5rem;
+}
+
+.chat-serif li {
+  margin-top: 0.25rem;
+  margin-bottom: 0.25rem;
+  line-height: 1.5;
+}
+
+.chat-serif h1, .chat-serif h2, .chat-serif h3, 
+.chat-serif h4, .chat-serif h5, .chat-serif h6 {
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #1f2937;
+  line-height: 1.3;
+}
+
+.chat-serif h1 {
+  font-size: 1.5rem;
+}
+
+.chat-serif h2 {
+  font-size: 1.25rem;
+}
+
+.chat-serif h3 {
+  font-size: 1.125rem;
+}
+
+.chat-serif code {
+  background-color: #f3f4f6;
+  padding: 0.125rem 0.25rem;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  color: #1f2937;
+}
+
+.chat-serif strong {
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.chat-serif em {
+  font-style: italic;
+  color: #4b5563;
+}
+
+.chat-serif blockquote {
+  border-left: 4px solid #e5e7eb;
+  padding-left: 1rem;
+  margin: 1rem 0;
+  font-style: italic;
+  color: #6b7280;
+}
+
+.chat-serif hr {
+  border: none;
+  border-top: 1px solid #e5e7eb;
+  margin: 1.5rem 0;
 }

@@ -2,6 +2,7 @@ from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from app.routes import upload, query, auth
 from app.routes.settings import router as settings_router
+from app.routes import mock_demo
 from app.middleware.auth import get_current_user
 
 from dotenv import load_dotenv
@@ -41,3 +42,4 @@ app.include_router(auth.router)
 app.include_router(upload.router)
 app.include_router(query.router)
 app.include_router(settings_router)
+app.include_router(mock_demo.router)

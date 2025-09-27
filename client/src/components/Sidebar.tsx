@@ -17,12 +17,14 @@ interface SidebarProps {
   sidebarOpen: boolean;
   setSidebarOpen: (open: boolean) => void;
   onLogout?: () => void;
+  recentChats?: Array<{ id: string; title: string; confidence?: 'high' | 'medium' | 'low' }>;
 }
 
 export default function Sidebar({
   sidebarOpen,
   setSidebarOpen,
   onLogout,
+  recentChats = [],
 }: SidebarProps) {
   const navigate = useNavigate();
   const location = useLocation();
@@ -34,12 +36,7 @@ export default function Sidebar({
     { name: "Settings", href: "/settings", icon: Cog6ToothIcon },
   ];
 
-  // Mock recent chats data
-  const recentChats = [
-    { id: "1", title: "Employee handbook questions", time: "2 hours ago" },
-    { id: "2", title: "Policy document analysis", time: "Yesterday" },
-    { id: "3", title: "Contract review session", time: "3 days ago" },
-  ];
+  // Recent chats data comes from props (starts empty)
 
   // Close menu when clicking outside
   useEffect(() => {
@@ -124,7 +121,7 @@ export default function Sidebar({
                 <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-white px-6 pb-4">
                   <div className="flex h-16 shrink-0 items-center">
                     <div className="flex items-center">
-                      <h1 className="text-xl font-bold text-gray-900">DocChat</h1>
+                      <h1 className="text-xl font-bold text-gray-900">DocChat <span className="text-sm font-normal text-gray-500">(Beta)</span></h1>
                     </div>
                   </div>
                   <nav className="flex flex-1 flex-col">
@@ -172,10 +169,10 @@ export default function Sidebar({
 
       {/* Static sidebar for desktop */}
       <div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-70 lg:flex-col">
-        <div className="flex grow flex-col gap-y-5 overflow-y-auto border-r border-gray-300 bg-gray-100 px-6 pb-4">
+        <div className="flex grow flex-col gap-y-5 overflow-y-auto border-r border-gray-300 px-6 pb-4" style={{ backgroundColor: '#f0efec' }}>
           <div className="flex h-16 shrink-0 items-center">
             <div className="flex items-center">
-              <h1 className="text-xl font-bold text-gray-900">DocChat</h1>
+              <h1 className="text-xl font-bold text-gray-900">DocChat <span className="text-sm font-normal text-gray-500">(Beta)</span></h1>
             </div>
           </div>
           <nav className="flex flex-1 flex-col">
@@ -188,24 +185,36 @@ export default function Sidebar({
                         onClick={() => handleNavigation(item.href)}
                         className={classNames(
                           isCurrentPage(item.href)
-                            ? "bg-gray-200 text-indigo-600"
-                            : "text-gray-700 hover:bg-gray-50 hover:text-indigo-600",
+                            ? ""
+                            : "hover:bg-gray-50",
                           "group flex gap-x-3 rounded-md p-2 text-base font-semibold w-full text-left cursor-pointer"
                         )}
+                        style={{
+                          backgroundColor: isCurrentPage(item.href) ? '#e9e7e3' : 'transparent',
+                          color: isCurrentPage(item.href) ? '#D9664A' : '#4A4A4A'
+                        }}
+                        onMouseEnter={(e) => {
+                          if (!isCurrentPage(item.href)) {
+                            e.currentTarget.style.color = '#D9664A';
+                          }
+                        }}
+                        onMouseLeave={(e) => {
+                          if (!isCurrentPage(item.href)) {
+                            e.currentTarget.style.color = '#4A4A4A';
+                          }
+                        }}
                       >
                         <item.icon
-                          className={classNames(
-                            isCurrentPage(item.href)
-                              ? "text-indigo-600"
-                              : "text-gray-400 group-hover:text-indigo-600",
-                            "h-6 w-5 shrink-0"
-                          )}
+                          className="h-6 w-5 shrink-0"
+                          style={{
+                            color: isCurrentPage(item.href) ? '#D9664A' : '#4A4A4A'
+                          }}
                           aria-hidden="true"
                         />
                         {item.name}
                       </button>
-                      {/* Add divider between Dashboard and Settings */}
-                      {index === 0 && (
+                      {/* Add divider before Settings */}
+                      {index === 1 && (
                         <div className="mx-2 my-2 border-t border-gray-200" />
                       )}
                     </li>
@@ -215,14 +224,26 @@ export default function Sidebar({
               
               {/* Recent Chats Section */}
               <li>
-                <div className="text-xs font-semibold leading-6 text-gray-500 mb-2">Recent Chats</div>
-                <ul role="list" className="-mx-2 space-y-1">
+                <div className="text-xs font-semibold leading-6 text-gray-500 mb-2 text-left">Recent Chats</div>
+                <ul role="list" className="-mx-2 space-y-0">
                   {recentChats.map((chat) => (
                     <li key={chat.id} className="relative">
-                      <div className="group flex items-center justify-between rounded-md p-2 text-sm hover:bg-gray-50">
+                      <div className="group flex items-center justify-between rounded-md p-1 text-sm hover:bg-gray-50">
                         <button className="flex-1 min-w-0 text-left">
-                          <p className="text-base text-gray-700 truncate">{chat.title}</p>
-                          <p className="text-sm text-gray-500">{chat.time}</p>
+                          <div className="flex items-center space-x-2">
+                            <p className="text-sm text-gray-700 truncate">{chat.title}</p>
+                            {chat.confidence && (
+                              <span className={`inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium ${
+                                chat.confidence === 'high' 
+                                  ? 'bg-green-100 text-green-800' 
+                                  : chat.confidence === 'medium' 
+                                  ? 'bg-yellow-100 text-yellow-800' 
+                                  : 'bg-red-100 text-red-800'
+                              }`}>
+                                {chat.confidence}
+                              </span>
+                            )}
+                          </div>
                         </button>
                         
                         <div className="relative" ref={openChatMenu === chat.id ? menuRef : null}>

@@ -1,0 +1,54 @@
+{
+    "question": "What are the code of conduct and ehtics for Zenith Dynamics?",
+    "answer": "Zenith Dynamics has established various principles and guidelines concerning its code of conduct and ethics:\n\n1. **Abuse during Work Hours or Company Events**: Zenith Dynamics does not tolerate any form of abuse during work hours or at company events (Source: Zenith Dynamics - Employee Handbook.docx)\n\n2. **Acceptance of Gifts or Favors**: Employees are prohibited from accepting gifts or favors that could potentially influence business decisions (Source: Zenith Dynamics - Employee Handbook.docx)\n\n3. **Anti-Harassment & Discrimination Policy (Policy #ETH-202)**: Zenith Dynamics maintains a zero-tolerance policy for harassment or discrimination based on race, color, religion, sex, sexual orientation, gender identity, national origin, age, disability, veteran status, or any other protected characteristic (Source: Zenith Dynamics - Employee Handbook.docx)\n\n4. **Reporting Process**: The first line of reporting in most situations is the immediate supervisor. Other reporting processes include contacting the HR Department, Anonymous Hotline, and online reporting at ethics@zenithdynamics.com. All reports are promised to be investigated within 5 business days, with confidentiality maintained as much as possible (Source: Zenith Dynamics - Employee Handbook.docx)\n\n5. **Zero Retaliation Policy**: Zenith Dynamics strictly enforces a no retaliation policy for reported violations. Appropriate corrective action is taken when violations are confirmed (Source: Zenith Dynamics - Employee Handbook.docx)\n\nFor additional clarification, any questions regarding the code of conduct can be directed to the company's HR department (Source: Zenith Dynamics - Employee Handbook.docx).",
+    "confidence": {
+        "level": "High",
+        "explanation": "The information comes directly from the source document and pertains specifically to the asked question."
+    },
+    "sources": [
+        {
+            "file_name": "Zenith Dynamics - Employee Handbook.docx",
+            "chunk_index": 0
+        },
+        {
+            "file_name": "Zenith Dynamics - Employee Handbook.docx",
+            "chunk_index": 17
+        },
+        {
+            "file_name": "Zenith Dynamics - Employee Handbook.docx",
+            "chunk_index": 42
+        },
+        {
+            "file_name": "Zenith Dynamics - Employee Handbook.docx",
+            "chunk_index": 18
+        },
+        {
+            "file_name": "Zenith Dynamics - Employee Handbook.docx",
+            "chunk_index": 43
+        },
+        {
+            "file_name": "Zenith Dynamics - Employee Handbook.docx",
+            "chunk_index": 1
+        },
+        {
+            "file_name": "Zenith Dynamics - Employee Handbook.docx",
+            "chunk_index": 38
+        },
+        {
+            "file_name": "Zenith Dynamics - Employee Handbook.docx",
+            "chunk_index": 37
+        },
+        {
+            "file_name": "Zenith Dynamics - Employee Handbook.docx",
+            "chunk_index": 39
+        },
+        {
+            "file_name": "Zenith Dynamics - Employee Handbook.docx",
+            "chunk_index": 35
+        }
+    ],
+    "source_documents": [
+        "Zenith Dynamics - Employee Handbook.docx"
+    ],
+    "chunks_found": 10
+}

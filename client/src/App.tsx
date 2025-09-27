@@ -3,10 +3,12 @@ import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from "r
 import Sidebar from "./components/Sidebar";
 import Header from "./components/Header";
 import ContentArea from "./components/ContentArea";
+import DocumentLibrary from "./components/DocumentLibrary";
 import Settings from "./components/Settings";
 import HomePage from "./components/HomePage";
 import SignIn from "./components/SignIn";
 import SignUp from "./components/SignUp";
+import DemoPage from "./components/DemoPage";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 
 // Protected Route component
@@ -18,17 +20,19 @@ function ProtectedRoute({ children, isAuthenticated }: { children: React.ReactNo
 }
 
 // Dashboard Layout component
-function DashboardLayout({ children, onLogout, user, showDemoModal, setShowDemoModal }: { 
+function DashboardLayout({ children, onLogout, user, showDemoModal, setShowDemoModal, recentChats }: { 
   children: React.ReactNode; 
   onLogout: () => void; 
   user: { id: string; email: string; full_name: string } | null;
   showDemoModal: boolean;
   setShowDemoModal: (show: boolean) => void;
+  recentChats: Array<{ id: string; title: string }>;
+  setRecentChats: React.Dispatch<React.SetStateAction<Array<{ id: string; title: string }>>>;
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
 
-  const showHeader = location.pathname === "/settings" || location.pathname === "/dashboard";
+  const showHeader = location.pathname === "/settings" || location.pathname === "/dashboard" || location.pathname === "/library";
 
   return (
     <div>
@@ -36,6 +40,7 @@ function DashboardLayout({ children, onLogout, user, showDemoModal, setShowDemoM
         sidebarOpen={sidebarOpen}
         setSidebarOpen={setSidebarOpen}
         onLogout={onLogout}
+        recentChats={recentChats}
       />
       {showHeader && (
         <Header
@@ -56,6 +61,9 @@ export default function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState<{ id: string; email: string; full_name: string } | null>(null);
   const [showDemoModal, setShowDemoModal] = useState(false);
+  
+  // Recent chats state - starts empty, managed at app level
+  const [recentChats, setRecentChats] = useState<Array<{ id: string; title: string }>>([]);
 
   const handleLogin = (success: boolean, userData?: { id: string; email: string; full_name: string }) => {
     if (success) {
@@ -72,6 +80,8 @@ export default function App() {
   const handleLogout = () => {
     setIsAuthenticated(false);
     setUser(null);
+    // Redirect to sign in page
+    window.location.href = '/signin';
   };
 
   return (
@@ -110,13 +120,31 @@ export default function App() {
           } 
         />
 
+        {/* Demo Route */}
+        <Route 
+          path="/demo" 
+          element={<DemoPage />} 
+        />
+
         {/* Dashboard Route */}
         <Route 
           path="/dashboard" 
           element={
             <ProtectedRoute isAuthenticated={isAuthenticated}>
-              <DashboardLayout onLogout={handleLogout} user={user} showDemoModal={showDemoModal} setShowDemoModal={setShowDemoModal}>
-                <ContentArea />
+              <DashboardLayout onLogout={handleLogout} user={user} showDemoModal={showDemoModal} setShowDemoModal={setShowDemoModal} recentChats={recentChats} setRecentChats={setRecentChats}>
+                <ContentArea recentChats={recentChats} setRecentChats={setRecentChats} />
+              </DashboardLayout>
+            </ProtectedRoute>
+          } 
+        />
+
+        {/* Document Library Route */}
+        <Route 
+          path="/library" 
+          element={
+            <ProtectedRoute isAuthenticated={isAuthenticated}>
+              <DashboardLayout onLogout={handleLogout} user={user} showDemoModal={showDemoModal} setShowDemoModal={setShowDemoModal} recentChats={recentChats} setRecentChats={setRecentChats}>
+                <DocumentLibrary />
               </DashboardLayout>
             </ProtectedRoute>
           } 
@@ -127,7 +155,7 @@ export default function App() {
           path="/settings" 
           element={
             <ProtectedRoute isAuthenticated={isAuthenticated}>
-              <DashboardLayout onLogout={handleLogout} user={user} showDemoModal={showDemoModal} setShowDemoModal={setShowDemoModal}>
+              <DashboardLayout onLogout={handleLogout} user={user} showDemoModal={showDemoModal} setShowDemoModal={setShowDemoModal} recentChats={recentChats} setRecentChats={setRecentChats}>
                 <Settings />
               </DashboardLayout>
             </ProtectedRoute>

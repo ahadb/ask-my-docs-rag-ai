@@ -1,6 +1,6 @@
 import { Bars3Icon } from "@heroicons/react/24/outline";
 import { HomeIcon } from "@heroicons/react/24/outline";
-import { ArrowRightOnRectangleIcon, ChevronDownIcon, Cog6ToothIcon } from "@heroicons/react/24/outline";
+import { ArrowRightOnRectangleIcon, ChevronDownIcon, Cog6ToothIcon, BuildingOfficeIcon } from "@heroicons/react/24/outline";
 import { clearAuthToken } from "../utils/auth";
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -19,32 +19,32 @@ export default function Header({
   onNavigateHome,
   onLogout,
   user,
-  setShowDemoModal,
+
 }: HeaderProps) {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
   // Generate avatar color based on user name
-  const getAvatarColor = (name: string) => {
-    const colors = [
-      'bg-indigo-600',
-      'bg-purple-600', 
-      'bg-pink-600',
-      'bg-red-600',
-      'bg-orange-600',
-      'bg-yellow-600',
-      'bg-green-600',
-      'bg-teal-600',
-      'bg-cyan-600',
-      'bg-blue-600'
-    ];
-    const hash = name.split('').reduce((a, b) => {
-      a = ((a << 5) - a) + b.charCodeAt(0);
-      return a & a;
-    }, 0);
-    return colors[Math.abs(hash) % colors.length];
-  };
+  // const getAvatarColor = (name: string) => {
+  //   const colors = [
+  //     'bg-indigo-600',
+  //     'bg-purple-600', 
+  //     'bg-pink-600',
+  //     'bg-red-600',
+  //     'bg-orange-600',
+  //     'bg-yellow-600',
+  //     'bg-green-600',
+  //     'bg-teal-600',
+  //     'bg-cyan-600',
+  //     'bg-blue-600'
+  //   ];
+  //   const hash = name.split('').reduce((a, b) => {
+  //     a = ((a << 5) - a) + b.charCodeAt(0);
+  //     return a & a;
+  //   }, 0);
+  //   return colors[Math.abs(hash) % colors.length];
+  // };
 
   // Get user initials
   const getUserInitials = () => {
@@ -62,8 +62,7 @@ export default function Header({
     return 'D';
   };
 
-  const avatarColor = user?.full_name ? getAvatarColor(user.full_name) : 
-                     user?.email ? getAvatarColor(user.email) : 'bg-indigo-600';
+  // const avatarColor = '';
 
   // Close menu when clicking outside
   useEffect(() => {
@@ -79,7 +78,7 @@ export default function Header({
     };
   }, []);
   return (
-    <div className="sticky top-0 z-40 flex h-12 shrink-0 items-center gap-x-3 border-b border-gray-200 bg-white px-3 shadow-sm sm:gap-x-4 sm:px-4 lg:px-6 lg:pl-72">
+    <div className="sticky top-0 z-40 flex h-12 shrink-0 items-center gap-x-3 border-b border-gray-200 px-3 shadow-sm sm:gap-x-4 sm:px-4 lg:px-6 lg:pl-72" style={{ backgroundColor: '#f0efec' }}>
       <button
         type="button"
         className="-m-2.5 p-2.5 text-gray-700 lg:hidden"
@@ -93,14 +92,26 @@ export default function Header({
       <div className="h-5 w-px bg-gray-200 lg:hidden" aria-hidden="true" />
 
       <div className="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
-        {/* Demo Badge - Far Left */}
+        {/* Breadcrumb - Far Left */}
         <div className="flex items-center">
-          <button 
-            onClick={() => setShowDemoModal(true)}
-            className="bg-indigo-50 text-indigo-700 text-xs font-semibold px-3 ml-2 py-1 rounded-full shadow-sm border border-indigo-200 hover:bg-indigo-100 transition-colors animate-pulse cursor-pointer"
+          <BuildingOfficeIcon className="h-4 w-4 text-gray-600 ml-2 mr-2" />
+          <button
+            onClick={() => navigate('/settings')}
+            className="text-sm hover:underline transition-colors"
+            style={{ color: '#D9664A' }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.color = '#B85450';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.color = '#D9664A';
+            }}
           >
-            DEMO
+            Demo Org
           </button>
+          <span className="text-sm text-gray-400 mx-2">/</span>
+          <span className="text-sm text-gray-900 font-medium">
+            Dashboard
+          </span>
         </div>
         
         <div className="flex flex-1 items-center justify-between">
@@ -118,7 +129,7 @@ export default function Header({
                 className="flex items-center gap-x-3 rounded-md px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors duration-200"
               >
                 {/* Avatar */}
-                <div className={`flex h-8 w-8 items-center justify-center rounded-full ${avatarColor} text-white text-sm font-medium`}>
+                <div className="flex h-8 w-8 items-center justify-center rounded-full text-gray-700 text-sm font-medium" style={{ backgroundColor: '#e9e7e3' }}>
                   {getUserInitials()}
                 </div>
                 <span className="max-w-[120px] truncate">
@@ -134,7 +145,7 @@ export default function Header({
                   <div className="px-4 py-3 border-b border-gray-100">
                     <div className="flex items-center gap-x-3">
                       {/* Avatar in dropdown */}
-                      <div className={`flex h-10 w-10 items-center justify-center rounded-full ${avatarColor} text-white text-sm font-medium`}>
+                      <div className="flex h-10 w-10 items-center justify-center rounded-full text-gray-700 text-sm font-medium" style={{ backgroundColor: '#e9e7e3' }}>
                         {getUserInitials()}
                       </div>
                       <div className="flex-1 min-w-0">
@@ -162,7 +173,7 @@ export default function Header({
                     </button>
                     <button
                       onClick={() => {
-                        navigate("/dashboard");
+                        navigate("/demo");
                         setIsUserMenuOpen(false);
                       }}
                       className="flex w-full items-center gap-x-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors duration-200"

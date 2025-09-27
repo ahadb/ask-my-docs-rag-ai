@@ -1,0 +1,54 @@
+{
+    "question": "What are the API endpoints and authentication methods in the DocChat technical handbook?",
+    "answer": "The DocChat technical handbook describes several API endpoints and the method of API Key Authentication.\n\n**API Endpoints:**\n- Document upload and processing: `POST /documents` for uploading and processing a document for chat interaction.\n- Chat creation: `POST /chat/sessions` for starting a new chat session with processed documents.\n- Message sending: `POST /ch` for sending a question to a chat session.\n- Webhooks configuration: `POST /webhooks` for configuring webhooks to receive real-time notifications about document processing and chat events.\n\n**Authentication Method:**\nThe book outlines the API Key Authentication process. All API requests require authentication using your API key in the request header. Here's a sample header for this method:\n```\nAuthorization: Bearer dc_live_1234567890abcdef\nContent-Type: application/json\n```\nAPI keys are obtained from the DocChat Dashboard and should be stored securely.",
+    "confidence": {
+        "level": "High",
+        "explanation": "All the information is directly quoted from the DocChat API - Technical Handbook.docx"
+    },
+    "sources": [
+        {
+            "file_name": "DocChat API - Technical Handbook.docx",
+            "chunk_index": 0
+        },
+        {
+            "file_name": "DocChat API - Technical Handbook.docx",
+            "chunk_index": 2
+        },
+        {
+            "file_name": "DocChat API - Technical Handbook.docx",
+            "chunk_index": 1
+        },
+        {
+            "file_name": "DocChat API - Technical Handbook.docx",
+            "chunk_index": 14
+        },
+        {
+            "file_name": "DocChat API - Technical Handbook.docx",
+            "chunk_index": 19
+        },
+        {
+            "file_name": "DocChat API - Technical Handbook.docx",
+            "chunk_index": 15
+        },
+        {
+            "file_name": "DocChat API - Technical Handbook.docx",
+            "chunk_index": 7
+        },
+        {
+            "file_name": "DocChat API - Technical Handbook.docx",
+            "chunk_index": 3
+        },
+        {
+            "file_name": "DocChat API - Technical Handbook.docx",
+            "chunk_index": 30
+        },
+        {
+            "file_name": "DocChat API - Technical Handbook.docx",
+            "chunk_index": 6
+        }
+    ],
+    "source_documents": [
+        "DocChat API - Technical Handbook.docx"
+    ],
+    "chunks_found": 10
+}

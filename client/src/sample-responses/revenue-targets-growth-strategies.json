@@ -1,0 +1,55 @@
+{
+    "question": "What are the revenue targets and growth strategies mentioned across all documents?",
+    "answer": "The revenue targets and growth strategies mentioned across all the documents are as follows:\n\n**Cloud Scale Sales Strategy**\n\n- Revenue Target: $42.5 million, representing a 65% growth from 2024.\n\n- New Customer Acquisition: 285 new customers.\n\n- Average Contract Value: $45,000, a 12% increase from the previous year.\n\n- Expansion Revenue: 35% of total revenue from existing customers.\n\n- Other Key Performance Indicators include: \n   - Annual Recurring Revenue (ARR): $42.5M\n   - New ARR: $26.1M from new customers (61% of total)\n   - Expansion ARR: $16.4M from existing customers (39% of total)\n   - Total Contract Value (TCV): $67K average including multi-year commitments.\n\n- Other Growth Strategies: \n  - Expansion Revenue Optimization, including Land and Expand Strategy \n  - Usage-Based Growth\n  - Cross-Sell Opportunities\n  - Renewal Optimization\n\n**The Daily Grind Marketing Strategy**\n\n- Revenue Growth: A target revenue of $28.5 million, indicating a 35% increase from 2024.\n\n- Average Ticket Size: They aim to increase the average ticket size to $8.75.\n\n- Daily Transactions per Store: The goal is to increase it to 485 transactions.\n\n- New Customer Acquisition: Aim to acquire 45,000 new customers.\n\n- Market Expansion: They are working towards opening 10 new locations in target metropolitan areas.\n\n- Other Strategic Objectives include: \n  - Increase in new customer acquisition through Digital Marketing, Events & Experiential, Partnerships, and Traditional Advertising\n  - Targeting larger demographic of urban professionals, college students, and remote workers which represents over 73% of specialty coffee consumption.",
+    "confidence": {
+        "level": "High",
+        "explanation": "All information directly pulled from both the \"Cloud Scale - Sales Strategy.docx\" and \"The Daily Grind - Marketing Strategy.docx\" documents."
+    },
+    "sources": [
+        {
+            "file_name": "Cloud Scale - Sales Strategy.docx",
+            "chunk_index": 32
+        },
+        {
+            "file_name": "Cloud Scale - Sales Strategy.docx",
+            "chunk_index": 33
+        },
+        {
+            "file_name": "Cloud Scale - Sales Strategy.docx",
+            "chunk_index": 1
+        },
+        {
+            "file_name": "Cloud Scale - Sales Strategy.docx",
+            "chunk_index": 60
+        },
+        {
+            "file_name": "The Daily Grind - Marketing Strategy.docx",
+            "chunk_index": 2
+        },
+        {
+            "file_name": "Cloud Scale - Sales Strategy.docx",
+            "chunk_index": 41
+        },
+        {
+            "file_name": "The Daily Grind - Marketing Strategy.docx",
+            "chunk_index": 46
+        },
+        {
+            "file_name": "The Daily Grind - Marketing Strategy.docx",
+            "chunk_index": 30
+        },
+        {
+            "file_name": "Cloud Scale - Sales Strategy.docx",
+            "chunk_index": 12
+        },
+        {
+            "file_name": "Cloud Scale - Sales Strategy.docx",
+            "chunk_index": 50
+        }
+    ],
+    "source_documents": [
+        "Cloud Scale - Sales Strategy.docx",
+        "The Daily Grind - Marketing Strategy.docx"
+    ],
+    "chunks_found": 10
+}

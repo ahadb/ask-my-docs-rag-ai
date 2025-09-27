@@ -1,0 +1,54 @@
+{
+    "question": "If I'm implementing a new AI system, what best practices should I follow based on these documents?",
+    "answer": "Based on the provided documents, the following best practices should be considered when implementing a new AI system:\n\n- **Planning and Investment**: Organizations should prepare with proper planning and investment, prioritizing a strong foundation in AI implementation and organizational learning (*Impact of AI - Research Paper*).\n\n- **Assess AI Readiness**: Conduct an assessment of your organization's AI readiness, considering factors such as available data, technology infrastructure, and organizational change capacity before beginning implementation (*Impact of AI - Research Paper*).\n\n- **Invest in Change Management**: Resources should be allocated to change management, training, and employee support programs. Strong change management practices and comprehensive employee training programs contribute to successful AI implementation (*Impact of AI - Research Paper*).\n\n- **Start with High-Impact Use Cases**: Begin AI implementation with document types that have high volume, standardized formats, and clear business value (*Impact of AI - Research Paper*).\n\n- **Plan for Integration**: AI systems should integrate seamlessly with existing workflows and enterprise systems (*Impact of AI - Research Paper*).\n\n- **Establish Success Metrics**: It’s crucial to define clear, measurable objectives for AI implementation based on productivity or other relevant metrics (*Impact of AI - Research Paper*).\n\n.",
+    "confidence": {
+        "level": "High",
+        "explanation": "All points directly quoted from the provided sources"
+    },
+    "sources": [
+        {
+            "file_name": "The Impact of AI - Research Paper.docx",
+            "chunk_index": 56
+        },
+        {
+            "file_name": "The Impact of AI - Research Paper.docx",
+            "chunk_index": 55
+        },
+        {
+            "file_name": "The Impact of AI - Research Paper.docx",
+            "chunk_index": 8
+        },
+        {
+            "file_name": "The Impact of AI - Research Paper.docx",
+            "chunk_index": 54
+        },
+        {
+            "file_name": "The Impact of AI - Research Paper.docx",
+            "chunk_index": 50
+        },
+        {
+            "file_name": "The Impact of AI - Research Paper.docx",
+            "chunk_index": 6
+        },
+        {
+            "file_name": "The Impact of AI - Research Paper.docx",
+            "chunk_index": 53
+        },
+        {
+            "file_name": "The Impact of AI - Research Paper.docx",
+            "chunk_index": 57
+        },
+        {
+            "file_name": "The Impact of AI - Research Paper.docx",
+            "chunk_index": 47
+        },
+        {
+            "file_name": "The Impact of AI - Research Paper.docx",
+            "chunk_index": 4
+        }
+    ],
+    "source_documents": [
+        "The Impact of AI - Research Paper.docx"
+    ],
+    "chunks_found": 10
+}

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { setAuthToken } from "../utils/auth";
+import { API_URLS } from "../config";
 import {
   ArrowLeftIcon,
   EyeIcon,
@@ -33,7 +34,7 @@ export default function SignIn({ onLogin, isAuthenticated }: SignInProps) {
 
     try {
       // Call your backend auth endpoint
-      const response = await fetch("http://localhost:8000/auth/signin", {
+      const response = await fetch(API_URLS.AUTH_SIGNIN, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -49,7 +50,7 @@ export default function SignIn({ onLogin, isAuthenticated }: SignInProps) {
         // Store the JWT token
         setAuthToken(data.access_token);
         onLogin(true, data.user);
-        navigate("/dashboard");
+        navigate("/demo");
       } else {
         const errorData = await response.json();
         setError(errorData.detail || "Invalid credentials");
@@ -70,12 +71,12 @@ export default function SignIn({ onLogin, isAuthenticated }: SignInProps) {
   // Redirect if already authenticated
   useEffect(() => {
     if (isAuthenticated) {
-      navigate("/dashboard");
+      navigate("/demo");
     }
   }, [isAuthenticated, navigate]);
 
   return (
-    <div className="min-h-screen bg-white relative isolate overflow-hidden">
+    <div className="min-h-screen relative isolate overflow-hidden" style={{ backgroundColor: '#f7f6f4' }}>
       {/* Background Pattern */}
       <svg
         aria-hidden="true"
@@ -90,16 +91,16 @@ export default function SignIn({ onLogin, isAuthenticated }: SignInProps) {
             height={200}
             patternUnits="userSpaceOnUse"
           >
-            <path d="M.5 200V.5H200" fill="none" />
+            <path d="M.5 200V.5H200" fill="#D9664A" fillOpacity="0.05" />
           </pattern>
         </defs>
-        <svg x="50%" y={-1} className="overflow-visible fill-gray-50 dark:fill-gray-800/20">
+        {/* <svg x="50%" y={-1} className="overflow-visible fill-gray-50 dark:fill-gray-800/20">
           <path
             d="M-200 0h201v201h-201Z M600 0h201v201h-201Z M-400 600h201v201h-201Z M200 800h201v201h-201Z"
             strokeWidth={0}
           />
-        </svg>
-        <rect fill="url(#signin-pattern)" width="100%" height="100%" strokeWidth={0} />
+        </svg> */}
+        {/* <rect fill="url(#signin-pattern)" width="100%" height="100%" strokeWidth={0} /> */}
       </svg>
       <div
         aria-hidden="true"
@@ -110,7 +111,7 @@ export default function SignIn({ onLogin, isAuthenticated }: SignInProps) {
             clipPath:
               'polygon(73.6% 51.7%, 91.7% 11.8%, 100% 46.4%, 97.4% 82.2%, 92.5% 84.9%, 75.7% 64%, 55.3% 47.5%, 46.5% 49.4%, 45% 62.9%, 50.3% 87.2%, 21.3% 64.1%, 0.1% 100%, 5.4% 51.1%, 21.4% 63.9%, 58.9% 0.2%, 73.6% 51.7%)',
           }}
-          className="aspect-1108/632 w-277 bg-linear-to-r from-[#80caff] to-[#4f46e5] opacity-20"
+          className="aspect-1108/632 w-277 bg-linear-to-r from-[#D9664A] to-[#B85450] opacity-20"
         />
       </div>
 
@@ -158,7 +159,7 @@ export default function SignIn({ onLogin, isAuthenticated }: SignInProps) {
               <div className="mb-6">
                 <h1 className="text-2xl font-bold text-gray-900 flex items-center">
                   User sign in
-                  <InformationCircleIcon className="ml-2 h-5 w-5 text-blue-500" />
+                  <InformationCircleIcon className="ml-2 h-5 w-5" style={{ color: '#D9664A' }} />
                 </h1>
               </div>
 
@@ -219,10 +220,10 @@ export default function SignIn({ onLogin, isAuthenticated }: SignInProps) {
                   </div>
                   <div className="mt-3 flex items-center justify-between">
                     <label className="flex items-center cursor-pointer">
-                      <input type="checkbox" className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" />
+                      <input type="checkbox" className="h-4 w-4 border-gray-300 rounded" style={{ accentColor: '#D9664A' }} />
                       <span className="ml-2 text-sm text-gray-600 hover:text-gray-800">Show Password</span>
                     </label>
-                    <a href="#" className="text-sm text-blue-600 hover:text-blue-500 font-medium">Having trouble?</a>
+                    <a href="#" className="text-sm font-medium" style={{ color: '#D9664A' }} onMouseEnter={(e) => { e.currentTarget.style.color = '#D9664A'; }} onMouseLeave={(e) => { e.currentTarget.style.color = '#D9664A'; }}>Having trouble?</a>
                   </div>
                 </div>
 
@@ -237,11 +238,26 @@ export default function SignIn({ onLogin, isAuthenticated }: SignInProps) {
                   <button
                     type="submit"
                     disabled={isLoading}
-                    className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full flex justify-center py-2 px-4 rounded-md shadow-sm text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                    style={{ 
+                      backgroundColor: '#e9e7e3', 
+                      color: '#D9664A', 
+                      border: '1px solid #D9664A' 
+                    }}
+                    onMouseEnter={(e) => {
+                      if (!isLoading) {
+                        e.currentTarget.style.backgroundColor = '#e9e7e3';
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (!isLoading) {
+                        e.currentTarget.style.backgroundColor = '#e9e7e3';
+                      }
+                    }}
                   >
                     {isLoading ? (
                       <div className="flex items-center">
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 mr-2" style={{ borderColor: '#D9664A' }}></div>
                         Signing in...
                       </div>
                     ) : (
@@ -252,16 +268,39 @@ export default function SignIn({ onLogin, isAuthenticated }: SignInProps) {
                   <button
                     type="button"
                     onClick={handleFillDemo}
-                    className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                    className="w-full flex justify-center py-2 px-4 rounded-md shadow-sm text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2"
+                    style={{ 
+                      backgroundColor: '#e9e7e3', 
+                      color: '#D9664A', 
+                      border: '1px solid #D9664A' 
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = '#e9e7e3';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = '#e9e7e3';
+                    }}
                   >
                     Fill Demo Credentials
                   </button> */}
                 </div>
 
                 {/* Create Account Link */}
-                <div className="text-center">
-                  <Link to="/signup" className="text-sm text-blue-600 hover:text-blue-500 font-medium">
+                <div className="text-center space-y-3">
+                  <Link to="/signup" className="text-sm font-medium" style={{ color: '#D9664A' }} onMouseEnter={(e) => { e.currentTarget.style.color = '#D9664A'; }} onMouseLeave={(e) => { e.currentTarget.style.color = '#D9664A'; }}>
                     Create a new account
+                  </Link>
+                  <div className="text-xs text-gray-500">
+                    or
+                  </div>
+                  <Link
+                    to="/demo"
+                    className="inline-flex items-center text-sm font-medium"
+                    style={{ color: '#D9664A' }}
+                    onMouseEnter={(e) => { e.currentTarget.style.color = '#D9664A'; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.color = '#D9664A'; }}
+                  >
+                    Try Demo First
                   </Link>
                 </div>
               </form>
@@ -271,11 +310,11 @@ export default function SignIn({ onLogin, isAuthenticated }: SignInProps) {
             <div className="mt-6 text-xs text-gray-500">
               <p>
                 By continuing, you agree to our{" "}
-                <a href="#" className="text-blue-600 hover:text-blue-500">Terms of Service</a>
+                <a href="#" className="font-medium" style={{ color: '#D9664A' }} onMouseEnter={(e) => { e.currentTarget.style.color = '#D9664A'; }} onMouseLeave={(e) => { e.currentTarget.style.color = '#D9664A'; }}>Terms of Service</a>
                 {" "}and{" "}
-                <a href="#" className="text-blue-600 hover:text-blue-500">Privacy Policy</a>
+                <a href="#" className="font-medium" style={{ color: '#D9664A' }} onMouseEnter={(e) => { e.currentTarget.style.color = '#D9664A'; }} onMouseLeave={(e) => { e.currentTarget.style.color = '#D9664A'; }}>Privacy Policy</a>
                 . This site uses essential cookies. See our{" "}
-                <a href="#" className="text-blue-600 hover:text-blue-500">Cookie Notice</a>
+                <a href="#" className="font-medium" style={{ color: '#D9664A' }} onMouseEnter={(e) => { e.currentTarget.style.color = '#D9664A'; }} onMouseLeave={(e) => { e.currentTarget.style.color = '#D9664A'; }}>Cookie Notice</a>
                 {" "}for more information.
               </p>
             </div>
@@ -283,7 +322,7 @@ export default function SignIn({ onLogin, isAuthenticated }: SignInProps) {
 
             {/* Right Box - Promotional Banner */}
             <div className="hidden lg:block flex-1 max-w-md flex flex-col">
-              <div className="bg-gradient-to-br from-blue-400 via-blue-500 to-blue-600 rounded-lg p-8 text-left text-white flex-1 flex flex-col justify-center mt-14 min-h-[400px] relative overflow-hidden">
+              <div className="bg-gradient-to-br from-[#D9664A] via-[#C55A42] to-[#B85450] rounded-lg p-8 text-left text-white flex-1 flex flex-col justify-center mt-14 min-h-[400px] relative overflow-hidden">
                 {/* Background Pattern - Simple Grid */}
                 <div className="absolute inset-0 -z-10 opacity-30">
                   <div className="absolute inset-0" style={{
@@ -312,10 +351,6 @@ export default function SignIn({ onLogin, isAuthenticated }: SignInProps) {
                 <p className="text-base mb-6 opacity-90">
                   Transform any document into an intelligent AI assistant. Upload PDFs and ask questions in plain English.
                 </p>
-                <a href="#" className="inline-flex items-center text-white hover:text-gray-200 font-medium">
-                  Learn more
-                  <span className="ml-1">→</span>
-                </a>
               </div>
             </div>
           </div>
