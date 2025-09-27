@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import Sidebar from "./components/Sidebar";
 import Header from "./components/Header";
@@ -10,6 +10,8 @@ import SignIn from "./components/SignIn";
 import SignUp from "./components/SignUp";
 import DemoPage from "./components/DemoPage";
 import { XMarkIcon } from "@heroicons/react/24/outline";
+import { getAuthToken } from "./utils/auth";
+import { API_CONFIG } from "./config";
 
 // Protected Route component
 function ProtectedRoute({ children, isAuthenticated }: { children: React.ReactNode; isAuthenticated: boolean }) {
@@ -61,9 +63,43 @@ export default function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState<{ id: string; email: string; full_name: string } | null>(null);
   const [showDemoModal, setShowDemoModal] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   
   // Recent chats state - starts empty, managed at app level
   const [recentChats, setRecentChats] = useState<Array<{ id: string; title: string }>>([]);
+
+  // Check for existing auth token on app load
+  useEffect(() => {
+    const checkAuthStatus = async () => {
+      const token = getAuthToken();
+      if (token) {
+        try {
+          // Validate token with backend
+          const response = await fetch(`${API_CONFIG.BASE_URL}/auth/me`, {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+            },
+          });
+          
+          if (response.ok) {
+            const userData = await response.json();
+            setIsAuthenticated(true);
+            setUser(userData);
+          } else {
+            // Token is invalid, clear it
+            localStorage.removeItem('authToken');
+          }
+        } catch (error) {
+          console.error('Auth validation failed:', error);
+          // Clear invalid token
+          localStorage.removeItem('authToken');
+        }
+      }
+      setIsLoading(false);
+    };
+
+    checkAuthStatus();
+  }, []);
 
   const handleLogin = (success: boolean, userData?: { id: string; email: string; full_name: string }) => {
     if (success) {
@@ -83,6 +119,18 @@ export default function App() {
     // Redirect to sign in page
     window.location.href = '/signin';
   };
+
+  // Show loading spinner while checking auth status
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#f7f6f4' }}>
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 mx-auto mb-4" style={{ borderColor: '#D9664A' }}></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <Router>
@@ -123,7 +171,11 @@ export default function App() {
         {/* Demo Route */}
         <Route 
           path="/demo" 
-          element={<DemoPage />} 
+          element={
+            <ProtectedRoute isAuthenticated={isAuthenticated}>
+              <DemoPage />
+            </ProtectedRoute>
+          } 
         />
 
         {/* Dashboard Route */}
