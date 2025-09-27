@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Header from "./Header";
 import { 
   ArrowRightIcon, 
@@ -12,6 +13,7 @@ import {
 
 const DemoPage: React.FC = () => {
   const [, setSidebarOpen] = useState(false);
+  const navigate = useNavigate();
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#f7f6f4' }}>
@@ -41,7 +43,7 @@ const DemoPage: React.FC = () => {
                   <button
                     onClick={() => {
                       // Navigate to dashboard
-                      window.location.href = '/dashboard';
+                      navigate('/dashboard');
                     }}
                     className="flex items-center space-x-3 px-8 py-4 text-lg font-medium rounded-md transition-colors whitespace-nowrap"
                     style={{
