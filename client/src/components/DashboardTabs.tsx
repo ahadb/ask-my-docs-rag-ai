@@ -62,7 +62,7 @@ export default function DashboardTabs({ children }: DashboardTabsProps) {
               <button
                 key={tab.id}
                 onClick={() => handleTabChange(tab.id)}
-                className={`flex items-center space-x-2 px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+                className={`flex items-center space-x-2 px-4 py-2 text-sm font-medium rounded-md transition-colors cursor-pointer ${
                   isActive
                     ? ''
                     : 'hover:bg-gray-100'

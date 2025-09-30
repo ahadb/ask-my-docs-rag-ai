@@ -88,12 +88,6 @@ export default function Upload({ onUploadComplete, documentRefreshTrigger, query
     setUploadedFiles(prev => [...prev, ...files]);
   }, []);
 
-  // const handleRemoveFile = useCallback((index: number) => {
-  //   const fileToRemove = uploadedFiles[index];
-  //   setUploadedFiles(prev => prev.filter((_, i) => i !== index));
-  //   setFileProcessingStatus(prev => prev.filter(file => file.fileName !== fileToRemove.name));
-  // }, [uploadedFiles]);
-
   const handleDragOver = useCallback((event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
     setIsDragOver(true);
@@ -126,7 +120,6 @@ export default function Upload({ onUploadComplete, documentRefreshTrigger, query
     setIsUploading(true);
     setUploadProgress({});
     
-    // Initialize processing status for all files
     const initialStatus: FileProcessingStatus[] = uploadedFiles.map(file => ({
       fileName: file.name,
       status: 'uploading',
@@ -139,12 +132,10 @@ export default function Upload({ onUploadComplete, documentRefreshTrigger, query
       for (let i = 0; i < uploadedFiles.length; i++) {
         const file = uploadedFiles[i];
         
-        // Step 1: Upload (0-25%)
         updateFileStatus(file.name, 'uploading', 0, 'upload', 'processing', 0);
         const formData = new FormData();
         formData.append('file', file);
         
-        // Simulate upload progress with step percentages
         for (let progress = 0; progress <= 25; progress += 5) {
           const stepProgress = Math.round((progress / 25) * 100);
           await new Promise(resolve => setTimeout(resolve, 50));
@@ -152,7 +143,6 @@ export default function Upload({ onUploadComplete, documentRefreshTrigger, query
         }
         updateFileStatus(file.name, 'processing', 25, 'upload', 'completed', 100);
 
-        // Step 2: Parse (25-50%)
         updateFileStatus(file.name, 'processing', 25, 'parse', 'processing', 0);
         
         const response = await fetchWithAuth(API_URLS.UPLOAD, {
@@ -166,7 +156,6 @@ export default function Upload({ onUploadComplete, documentRefreshTrigger, query
 
         const result = await response.json();
         
-        // Simulate parse progress
         for (let progress = 25; progress <= 50; progress += 5) {
           const stepProgress = Math.round(((progress - 25) / 25) * 100);
           await new Promise(resolve => setTimeout(resolve, 100));
@@ -174,15 +163,12 @@ export default function Upload({ onUploadComplete, documentRefreshTrigger, query
         }
         updateFileStatus(file.name, 'processing', 50, 'parse', 'completed', 100);
 
-        // Step 3: Chunk (50-70%)
         updateFileStatus(file.name, 'processing', 50, 'chunk', 'processing', 0);
         
-        // Update chunks count
         if (result.chunks_created) {
           setChunksCreated(prev => prev + result.chunks_created);
         }
         
-        // Simulate chunk progress
         for (let progress = 50; progress <= 70; progress += 5) {
           const stepProgress = Math.round(((progress - 50) / 20) * 100);
           await new Promise(resolve => setTimeout(resolve, 80));
@@ -190,46 +176,28 @@ export default function Upload({ onUploadComplete, documentRefreshTrigger, query
         }
         updateFileStatus(file.name, 'processing', 70, 'chunk', 'completed', 100);
 
-        // Step 4: Embed (70-90%)
         updateFileStatus(file.name, 'processing', 70, 'embed', 'processing', 0);
         
-        // Simulate embedding progress
         for (let progress = 70; progress <= 90; progress += 5) {
           const stepProgress = Math.round(((progress - 70) / 20) * 100);
           await new Promise(resolve => setTimeout(resolve, 120));
           updateFileStatus(file.name, 'processing', progress, 'embed', 'processing', stepProgress);
         }
         updateFileStatus(file.name, 'processing', 90, 'embed', 'completed', 100);
-
-        // Step 5: Store (90-100%)
-        updateFileStatus(file.name, 'processing', 90, 'store', 'processing', 0);
-        
-        // Simulate storage progress
-        for (let progress = 90; progress <= 100; progress += 5) {
-          const stepProgress = Math.round(((progress - 90) / 10) * 100);
-          await new Promise(resolve => setTimeout(resolve, 100));
-          updateFileStatus(file.name, 'processing', progress, 'store', 'processing', stepProgress);
-        }
-        updateFileStatus(file.name, 'processing', 100, 'store', 'completed', 100);
       }
 
-      // Wait a moment for backend processing
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      // Trigger document refresh to show new documents
       onUploadComplete();
       
-      // Clear files after successful upload
       setUploadedFiles([]);
       
-      // Reset processing status after a delay to show completion
       setTimeout(() => {
         setFileProcessingStatus([]);
       }, 2000);
       
     } catch (error) {
       console.error('Upload failed:', error);
-      // Mark all files as error
       uploadedFiles.forEach(file => {
         updateFileStatus(file.name, 'error', 0, 'upload', 'error');
       });
@@ -259,24 +227,8 @@ export default function Upload({ onUploadComplete, documentRefreshTrigger, query
     }));
   };
 
-
-  // const clearAllData = async () => {
-  //   if (window.confirm('Are you sure you want to clear all data? This action cannot be undone.')) {
-  //     try {
-  //       await fetchWithAuth(API_URLS.UPLOAD_CLEAR, { method: 'POST' });
-  //       setUploadedFiles([]);
-  //       setChunksCreated(0);
-  //       onUploadComplete();
-  //     } catch (error) {
-  //       console.error('Failed to clear data:', error);
-  //       alert('Failed to clear data. Please try again.');
-  //     }
-  //   }
-  // };
-
   return (
     <div className="w-full h-full p-6 overflow-y-auto overflow-x-hidden relative" style={{ backgroundColor: '#f7f6f4' }}>
-      {/* Background Pattern */}
       <div className="absolute inset-0 -z-10">
         <div className="absolute inset-0 bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100"></div>
         <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-blue-200/60 to-transparent"></div>
@@ -286,7 +238,6 @@ export default function Upload({ onUploadComplete, documentRefreshTrigger, query
       </div>
 
       <div className="flex flex-col items-center w-full max-w-4xl mx-auto min-w-0">
-        {/* Main Heading Section */}
         <div className="w-full max-w-2xl mb-6">
           <div className="flex items-center justify-between mb-2">
             <h1 className="text-2xl font-bold text-gray-900 text-left">
@@ -299,21 +250,14 @@ export default function Upload({ onUploadComplete, documentRefreshTrigger, query
             </p>
             <button
               onClick={() => window.location.href = '/dashboard?tab=chat'}
-              className="flex items-center text-base hover:underline transition-colors"
+              className="flex items-center text-base hover:underline transition-colors cursor-pointer"
               style={{ color: '#D9664A' }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.color = '#D9664A';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.color = '#D9664A';
-              }}
             >
               <SparklesIcon className="h-5 w-5 mr-2" />
               Chat with AI
             </button>
           </div>
           
-          {/* Notification Badge */}
           <div className="mt-4 p-3 rounded-lg border" style={{ backgroundColor: '#fefce8', borderColor: '#fde047' }}>
             <div className="flex items-start">
               <div className="flex-shrink-0">
@@ -333,17 +277,14 @@ export default function Upload({ onUploadComplete, documentRefreshTrigger, query
           </div>
         </div>
 
-        {/* AI Status Cards */}
         <div className="w-full max-w-2xl mb-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {/* AI Confidence Analysis Card */}
             <div className="backdrop-blur-sm border border-gray-400 rounded-lg p-4 shadow-sm">
               <div className="px-4 py-3 -mx-4 -mt-4 mb-3 border-b border-gray-400 rounded-t-lg" style={{ backgroundColor: '#e9e7e3' }}>
                 <h4 className="text-base font-semibold text-gray-900">AI Confidence Analysis</h4>
                 <p className="text-xs text-gray-600 mt-1">Last 24 hours</p>
               </div>
               <div className="space-y-3">
-                {/* Confidence Distribution Chart */}
                 <div className="space-y-2">
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-gray-600">Confidence</span>
@@ -354,20 +295,19 @@ export default function Upload({ onUploadComplete, documentRefreshTrigger, query
                     <span className="font-medium text-gray-900 text-right">{queryCount > 0 ? `${confidencePercentages.high}%` : '0%'}</span>
                   </div>
                   <div className="mt-4 w-full bg-gray-200 rounded-full h-4 flex overflow-hidden">
-              <div className="bg-green-300 h-4" style={{ width: `${confidencePercentages.high}%` }}></div>
-              <div className="bg-yellow-300 h-4" style={{ width: `${confidencePercentages.medium}%` }}></div>
-              <div className="bg-red-300 h-4" style={{ width: `${confidencePercentages.low}%` }}></div>
-            </div>
-            <div className="flex justify-between text-xs text-gray-500">
-              <span>High {queryCount > 0 ? confidencePercentages.high : 0}%</span>
-              <span>Medium {queryCount > 0 ? confidencePercentages.medium : 0}%</span>
-              <span>Low {queryCount > 0 ? confidencePercentages.low : 0}%</span>
-            </div>
+                    <div className="bg-green-300 h-4" style={{ width: `${confidencePercentages.high}%` }}></div>
+                    <div className="bg-yellow-300 h-4" style={{ width: `${confidencePercentages.medium}%` }}></div>
+                    <div className="bg-red-300 h-4" style={{ width: `${confidencePercentages.low}%` }}></div>
+                  </div>
+                  <div className="flex justify-between text-xs text-gray-500">
+                    <span>High {queryCount > 0 ? confidencePercentages.high : 0}%</span>
+                    <span>Medium {queryCount > 0 ? confidencePercentages.medium : 0}%</span>
+                    <span>Low {queryCount > 0 ? confidencePercentages.low : 0}%</span>
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* RAG Intelligence Card */}
             <div className="backdrop-blur-sm border border-gray-400 rounded-lg p-4 shadow-sm">
               <div className="px-4 py-3 -mx-4 -mt-4 mb-3 border-b border-gray-400 rounded-t-lg" style={{ backgroundColor: '#e9e7e3' }}>
                 <div className="flex items-center justify-between">
@@ -405,7 +345,6 @@ export default function Upload({ onUploadComplete, documentRefreshTrigger, query
               </div>
             </div>
 
-            {/* Query Analytics Card */}
             <div className="backdrop-blur-sm border border-gray-400 rounded-lg p-4 shadow-sm">
               <div className="px-4 py-3 -mx-4 -mt-4 mb-3 border-b border-gray-400 rounded-t-lg" style={{ backgroundColor: '#e9e7e3' }}>
                 <h4 className="text-base font-semibold text-gray-900">Query Analytics</h4>
@@ -427,7 +366,6 @@ export default function Upload({ onUploadComplete, documentRefreshTrigger, query
             </div>
           </div>
           
-          {/* Customization Note */}
           <div className="mt-4 text-left">
             <p className="text-xs text-gray-500 italic">
               The cards above are dynamically generated and can be customized to your specific needs and workflows
@@ -435,7 +373,6 @@ export default function Upload({ onUploadComplete, documentRefreshTrigger, query
           </div>
         </div>
 
-        {/* Tab Navigation */}
         <div className="w-full max-w-2xl">
           <div className="flex border-b border-gray-200">
             <button
@@ -463,139 +400,126 @@ export default function Upload({ onUploadComplete, documentRefreshTrigger, query
           </div>
         </div>
 
-        {/* Tab Content */}
         {activeTab === 'upload' && (
           <>
-            {/* Upload Area */}
-        <div className="w-full max-w-2xl mb-6 mt-2">
-          <div 
-            className={`backdrop-blur-sm border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
-              isDragOver ? 'border-orange-400 bg-orange-50' : 'border-gray-300 hover:border-indigo-400'
-            }`}
-            style={{ 
-              backgroundImage: isDragOver ? 'none' : 'repeating-linear-gradient(45deg, #e9e7e3, #e9e7e3 8px, rgba(233, 231, 227, 0.3) 8px, rgba(233, 231, 227, 0.3) 16px)',
-              backgroundColor: isDragOver ? '#fef3c7' : '#f5f4f2'
-            }}
-            onDragOver={handleDragOver}
-            onDragLeave={handleDragLeave}
-            onDrop={handleDrop}
-          >
-            <CloudArrowUpIcon className="mx-auto h-12 w-12 mb-4" style={{ color: '#D9664A' }} />
-            <div className="space-y-2">
-              <p className="text-lg font-medium text-gray-900">Upload your documents</p>
-              <p className="text-sm text-gray-600">
-                Drag and drop files here, or click to select files
-              </p>
-              <p className="text-xs text-gray-500">
-                Supports PDF, DOC, DOCX files up to 10MB each
-              </p>
-            </div>
-            <div className="mt-6 flex items-center justify-center space-x-4">
-              <input
-                ref={fileInputRef}
-                type="file"
-                multiple
-                accept=".pdf,.doc,.docx"
-                onChange={handleFileSelect}
-                className="hidden"
-              />
-      <button
-        onClick={() => fileInputRef.current?.click()}
-        disabled
-        className="flex items-center space-x-2 px-4 py-2 text-sm font-medium rounded-md transition-colors opacity-50 cursor-not-allowed"
-        style={{
-          backgroundColor: '#e9e7e3',
-          color: '#D9664A',
-          border: '1px solid #D9664A'
-        }}
-      >
-        <CloudArrowUpIcon className="h-4 w-4" />
-        <span>Select Files (Demo)</span>
-      </button>
-              {uploadedFiles.length > 0 && (
-                <button
-                  onClick={handleUpload}
-                  disabled={isUploading}
-                  className="inline-flex items-center px-4 py-2 border border-orange-300 text-sm font-medium rounded-md text-orange-700 bg-orange-50 hover:bg-orange-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {isUploading ? "Uploading..." : `Confirm upload (${uploadedFiles.length}) docs`}
-                </button>
-              )}
-            </div>
-          </div>
-          
-          {/* Upload Disabled Note */}
-          <div className="mt-4 text-left">
-            <p className="text-xs text-gray-500 italic">
-              Upload is disabled for demo - it will be enabled and customized to integrate with your tools in the full version
-            </p>
-          </div>
-        </div>
-
-
-        {/* Processing Visualization */}
-        {fileProcessingStatus.length > 0 && (
-          <div className="w-full max-w-2xl mt-6">
-            {/* Section Header */}
-            <div className="mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">Processing Documents</h3>
-              <p className="text-sm text-gray-600 mt-1">
-                Your documents are being processed through our AI pipeline
-              </p>
-            </div>
-            
-            <div className="bg-white/90 backdrop-blur-sm border border-gray-200 rounded-lg p-6 shadow-sm">
-              {/* RAG Processing Progress */}
-              <div className="mb-6">
-                <div className="text-sm text-gray-600 mb-4">
-                  Processing documents...
+            <div className="w-full max-w-2xl mb-6 mt-2">
+              <div 
+                className={`backdrop-blur-sm border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
+                  isDragOver ? 'border-orange-400 bg-orange-50' : 'border-gray-300 hover:border-indigo-400'
+                }`}
+                style={{ 
+                  backgroundImage: isDragOver ? 'none' : 'repeating-linear-gradient(45deg, #e9e7e3, #e9e7e3 8px, rgba(233, 231, 227, 0.3) 8px, rgba(233, 231, 227, 0.3) 16px)',
+                  backgroundColor: isDragOver ? '#fef3c7' : '#f5f4f2'
+                }}
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+              >
+                <CloudArrowUpIcon className="mx-auto h-12 w-12 mb-4" style={{ color: '#D9664A' }} />
+                <div className="space-y-2">
+                  <p className="text-lg font-medium text-gray-900">Upload your documents</p>
+                  <p className="text-sm text-gray-600">
+                    Drag and drop files here, or click to select files
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    Supports PDF, DOC, DOCX files up to 10MB each
+                  </p>
                 </div>
-                <div className="w-full bg-gray-200 rounded-full h-2 mb-4">
-                  <div 
-                    className="h-2 rounded-full transition-all duration-500"
-                    style={{ 
-                      width: `${Math.round(fileProcessingStatus.reduce((acc, file) => acc + file.progress, 0) / fileProcessingStatus.length)}%`,
-                      backgroundColor: '#D9664A'
+                <div className="mt-6 flex items-center justify-center space-x-4">
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    multiple
+                    accept=".pdf,.doc,.docx"
+                    onChange={handleFileSelect}
+                    className="hidden"
+                  />
+                  <button
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled
+                    className="flex items-center space-x-2 px-4 py-2 text-sm font-medium rounded-md transition-colors opacity-50 cursor-not-allowed"
+                    style={{
+                      backgroundColor: '#e9e7e3',
+                      color: '#D9664A',
+                      border: '1px solid #D9664A'
                     }}
-                  ></div>
-                </div>
-                
-                {/* Processing Steps */}
-                <div className="flex justify-between text-sm">
-                  {fileProcessingStatus.length > 0 && fileProcessingStatus[0].steps.map((step) => {
-                    const isActive = fileProcessingStatus.some(f => {
-                      const currentStep = f.steps.find(s => s.id === step.id);
-                      return currentStep?.status === 'processing' || currentStep?.status === 'completed';
-                    });
-                    // const isCompleted = fileProcessingStatus.some(f => {
-                    //   const currentStep = f.steps.find(s => s.id === step.id);
-                    //   return currentStep?.status === 'completed';
-                    // });
-                    const stepProgress = fileProcessingStatus.some(f => {
-                      const currentStep = f.steps.find(s => s.id === step.id);
-                      return currentStep?.progress || 0;
-                    });
-                    
-                    return (
-                      <span 
-                        key={step.id}
-                        className={`${isActive ? 'text-[#D9664A]' : 'text-gray-500'}`}
-                      >
-                        {step.name}
-                        {isActive && stepProgress !== undefined && (
-                          <span className="ml-1 text-xs">
-                            ({stepProgress}%)
-                          </span>
-                        )}
-                      </span>
-                    );
-                  })}
+                  >
+                    <CloudArrowUpIcon className="h-4 w-4" />
+                    <span>Select Files (Demo)</span>
+                  </button>
+                  {uploadedFiles.length > 0 && (
+                    <button
+                      onClick={handleUpload}
+                      disabled={isUploading}
+                      className="inline-flex items-center px-4 py-2 border border-orange-300 text-sm font-medium rounded-md text-orange-700 bg-orange-50 hover:bg-orange-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {isUploading ? "Uploading..." : `Confirm upload (${uploadedFiles.length}) docs`}
+                    </button>
+                  )}
                 </div>
               </div>
-
+              
+              <div className="mt-4 text-left">
+                <p className="text-xs text-gray-500 italic">
+                  Upload is disabled for demo - it will be enabled and customized to integrate with your tools in the full version
+                </p>
+              </div>
             </div>
-          </div>
-        )}
+
+            {fileProcessingStatus.length > 0 && (
+              <div className="w-full max-w-2xl mt-6">
+                <div className="mb-4">
+                  <h3 className="text-lg font-semibold text-gray-900">Processing Documents</h3>
+                  <p className="text-sm text-gray-600 mt-1">
+                    Your documents are being processed through our AI pipeline
+                  </p>
+                </div>
+                
+                <div className="bg-white/90 backdrop-blur-sm border border-gray-200 rounded-lg p-6 shadow-sm">
+                  <div className="mb-6">
+                    <div className="text-sm text-gray-600 mb-4">
+                      Processing documents...
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2 mb-4">
+                      <div 
+                        className="h-2 rounded-full transition-all duration-500"
+                        style={{ 
+                          width: `${Math.round(fileProcessingStatus.reduce((acc, file) => acc + file.progress, 0) / fileProcessingStatus.length)}%`,
+                          backgroundColor: '#D9664A'
+                        }}
+                      ></div>
+                    </div>
+                    
+                    <div className="flex justify-between text-sm">
+                      {fileProcessingStatus.length > 0 && fileProcessingStatus[0].steps.map((step) => {
+                        const isActive = fileProcessingStatus.some(f => {
+                          const currentStep = f.steps.find(s => s.id === step.id);
+                          return currentStep?.status === 'processing' || currentStep?.status === 'completed';
+                        });
+                        const stepProgress = fileProcessingStatus.some(f => {
+                          const currentStep = f.steps.find(s => s.id === step.id);
+                          return currentStep?.progress || 0;
+                        });
+                        
+                        return (
+                          <span 
+                            key={step.id}
+                            className={`${isActive ? 'text-[#D9664A]' : 'text-gray-500'}`}
+                          >
+                            {step.name}
+                            {isActive && stepProgress !== undefined && (
+                              <span className="ml-1 text-xs">
+                                ({stepProgress}%)
+                              </span>
+                            )}
+                          </span>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
           </>
         )}
 
@@ -603,7 +527,6 @@ export default function Upload({ onUploadComplete, documentRefreshTrigger, query
           <div className="w-full max-w-2xl">
             <div className="mb-6 mt-2">
               <div className="space-y-4">
-                {/* Google Sheets Integration */}
                 <div className="backdrop-blur-sm border border-gray-400 rounded-lg px-4 py-2 shadow-sm hover:border-gray-500 transition-colors">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center">
@@ -629,7 +552,6 @@ export default function Upload({ onUploadComplete, documentRefreshTrigger, query
                   </div>
                 </div>
 
-                {/* Airtable Integration */}
                 <div className="backdrop-blur-sm border border-gray-400 rounded-lg px-4 py-2 shadow-sm hover:border-gray-500 transition-colors">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center">
@@ -654,9 +576,7 @@ export default function Upload({ onUploadComplete, documentRefreshTrigger, query
                     </button>
                   </div>
                 </div>
-                
 
-                {/* Coming Soon */}
                 <div className="backdrop-blur-sm border border-gray-400 rounded-lg px-4 py-2 shadow-sm" style={{ backgroundColor: '#e9e7e3' }}>
                   <div className="flex items-center">
                     <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center mr-4">
@@ -670,7 +590,6 @@ export default function Upload({ onUploadComplete, documentRefreshTrigger, query
                 </div>
               </div>
               
-              {/* Integrations Disabled Note */}
               <div className="mt-4 text-left">
                 <p className="text-xs text-gray-500 italic">
                   Integrations are disabled for demo - they will be enabled and customized to integrate with your tools in the full version
@@ -679,9 +598,7 @@ export default function Upload({ onUploadComplete, documentRefreshTrigger, query
             </div>
           </div>
         )}
-
        
-        {/* Document Library Cards - Always visible */}
         <div className="w-full max-w-2xl mt-6">
           <DocumentLibraryCards refreshTrigger={documentRefreshTrigger} />
         </div>

@@ -103,7 +103,7 @@ export default function HomePage({
              {isAuthenticated ? (
                <button
                  onClick={handleNavigateToDashboard}
-                 className="rounded-md px-3.5 py-2.5 text-sm font-semibold shadow-xs focus-visible:outline-2 focus-visible:outline-offset-2"
+                 className="rounded-md px-3.5 py-2.5 text-sm font-semibold shadow-xs focus-visible:outline-2 focus-visible:outline-offset-2 cursor-pointer"
                  style={{ 
                    backgroundColor: '#e9e7e3', 
                    color: '#D9664A', 
@@ -122,7 +122,7 @@ export default function HomePage({
                <>
                  <button
                    onClick={() => navigate("/signin")}
-                   className="rounded-md px-3.5 py-2.5 text-sm font-semibold shadow-xs focus-visible:outline-2 focus-visible:outline-offset-2"
+                   className="rounded-md px-3.5 py-2.5 text-sm font-semibold shadow-xs focus-visible:outline-2 focus-visible:outline-offset-2 cursor-pointer"
                    style={{ 
                      backgroundColor: '#e9e7e3', 
                      color: '#D9664A', 
@@ -139,7 +139,7 @@ export default function HomePage({
                  </button>
                  <button
                    onClick={() => navigate("/signup")}
-                   className="rounded-md px-3.5 py-2.5 text-sm font-semibold shadow-xs focus-visible:outline-2 focus-visible:outline-offset-2"
+                   className="rounded-md px-3.5 py-2.5 text-sm font-semibold shadow-xs focus-visible:outline-2 focus-visible:outline-offset-2 cursor-pointer"
                    style={{ 
                      backgroundColor: '#e9e7e3', 
                      color: '#D9664A', 

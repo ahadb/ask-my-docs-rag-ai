@@ -238,7 +238,7 @@ export default function SignIn({ onLogin, isAuthenticated }: SignInProps) {
                   <button
                     type="submit"
                     disabled={isLoading}
-                    className="w-full flex justify-center py-2 px-4 rounded-md shadow-sm text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full flex justify-center py-2 px-4 rounded-md shadow-sm text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                     style={{ 
                       backgroundColor: '#e9e7e3', 
                       color: '#D9664A', 

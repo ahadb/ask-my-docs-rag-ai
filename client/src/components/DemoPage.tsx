@@ -45,7 +45,7 @@ const DemoPage: React.FC = () => {
                       // Navigate to dashboard
                       navigate('/dashboard');
                     }}
-                    className="flex items-center space-x-3 px-8 py-4 text-lg font-medium rounded-md transition-colors whitespace-nowrap"
+                    className="flex items-center space-x-3 px-8 py-4 text-lg font-medium rounded-md transition-colors whitespace-nowrap cursor-pointer"
                     style={{
                       backgroundColor: '#e9e7e3',
                       color: '#D9664A',
