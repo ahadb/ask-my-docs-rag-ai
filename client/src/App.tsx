@@ -13,7 +13,6 @@ import { XMarkIcon } from "@heroicons/react/24/outline";
 import { getAuthToken } from "./utils/auth";
 import { API_CONFIG } from "./config";
 
-// Protected Route component
 function ProtectedRoute({ children, isAuthenticated }: { children: React.ReactNode; isAuthenticated: boolean }) {
   if (!isAuthenticated) {
     return <Navigate to="/" replace />;
