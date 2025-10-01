@@ -62,12 +62,6 @@ export default function SignIn({ onLogin, isAuthenticated }: SignInProps) {
     setIsLoading(false);
   };
 
-  // const handleFillDemo = () => {
-  //   setUsername(DEMO_USERNAME);
-  //   setPassword(DEMO_PASSWORD);
-  //   setError("");
-  // };
-
   // Redirect if already authenticated
   useEffect(() => {
     if (isAuthenticated) {
