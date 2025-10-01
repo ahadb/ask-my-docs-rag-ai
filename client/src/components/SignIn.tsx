@@ -290,18 +290,7 @@ export default function SignIn({ onLogin, isAuthenticated }: SignInProps) {
                   <Link to="/signup" className="text-sm font-medium" style={{ color: '#D9664A' }} onMouseEnter={(e) => { e.currentTarget.style.color = '#D9664A'; }} onMouseLeave={(e) => { e.currentTarget.style.color = '#D9664A'; }}>
                     Create a new account
                   </Link>
-                  <div className="text-xs text-gray-500">
-                    or
-                  </div>
-                  <Link
-                    to="/demo"
-                    className="inline-flex items-center text-sm font-medium"
-                    style={{ color: '#D9664A' }}
-                    onMouseEnter={(e) => { e.currentTarget.style.color = '#D9664A'; }}
-                    onMouseLeave={(e) => { e.currentTarget.style.color = '#D9664A'; }}
-                  >
-                    Try Demo First
-                  </Link>
+                  
                 </div>
               </form>
             </div>
@@ -348,9 +337,26 @@ export default function SignIn({ onLogin, isAuthenticated }: SignInProps) {
                   />
                 </div>
                 <h2 className="text-2xl font-bold mb-4">AI-Powered Document Assistant</h2>
+                
                 <p className="text-base mb-6 opacity-90">
                   Transform any document into an intelligent AI assistant. Upload PDFs and ask questions in plain English.
                 </p>
+                
+                <div className="mt-8 p-6 backdrop-blur-sm rounded-xl border-1 border-white shadow-lg">
+                  <h3 className="text-xl font-bold mb-4 text-white">Demo Credentials</h3>
+                  <p className="text-base mb-4 font-medium text-white">Try it out with these credentials:</p>
+                  <div className="space-y-2 text-base">
+                    <p className="flex items-center">
+                      <strong className="text-white">Email:</strong> 
+                      <span className="ml-2 text-white font-mono bg-black/20 px-2 py-1 rounded">addybokhari@gmail.com</span>
+                    </p>
+                    <p className="flex items-center">
+                      <strong className="text-white">Password:</strong> 
+                      <span className="ml-2 text-white font-mono bg-black/20 px-2 py-1 rounded">demo!_user#</span>
+                    </p>
+                  </div>
+                  <p className="text-sm mt-4 text-white/80 bg-black/10 px-3 py-2 rounded-lg">This demo includes sample projects and data.</p>
+                </div>
               </div>
             </div>
           </div>
