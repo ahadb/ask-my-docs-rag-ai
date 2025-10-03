@@ -253,9 +253,9 @@ export default function DocumentLibraryPage() {
               </p>
               
               {/* Notification Badge */}
-              <div className="mt-4 p-3 rounded-lg border" style={{ backgroundColor: '#fefce8', borderColor: '#fde047' }}>
+              <div className="mt-4 inline-block p-3 rounded-lg border" style={{ backgroundColor: '#fefce8', borderColor: '#fde047' }}>
                 <p className="text-sm font-medium" style={{ color: '#713f12' }}>
-                  Download sample docs to get a tangible idea of pre-loaded documents. Some features are disabled on this tab
+                  Download all sample docs to get a tangible idea of the preloaded data.
                 </p>
               </div>
             </div>

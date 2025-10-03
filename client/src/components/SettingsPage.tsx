@@ -446,7 +446,7 @@ export default function SettingsPage() {
               disabled={true}
               className="px-6 py-2.5 bg-gray-300 text-gray-500 rounded-md cursor-not-allowed disabled:opacity-50 transition-all duration-200 font-medium"
             >
-              Save Settings (Demo)
+              Save Settings
             </button>
           </div>
         </form>
