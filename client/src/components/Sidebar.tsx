@@ -18,6 +18,7 @@ interface SidebarProps {
   setSidebarOpen: (open: boolean) => void;
   onLogout?: () => void;
   recentChats?: Array<{ id: string; title: string; confidence?: 'high' | 'medium' | 'low' }>;
+  onChatClick?: (chat: { id: string; title: string; confidence?: 'high' | 'medium' | 'low' }) => void;
 }
 
 export default function Sidebar({
@@ -25,6 +26,7 @@ export default function Sidebar({
   setSidebarOpen,
   onLogout,
   recentChats = [],
+  onChatClick,
 }: SidebarProps) {
   const navigate = useNavigate();
   const location = useLocation();
@@ -229,7 +231,10 @@ export default function Sidebar({
                   {recentChats.map((chat) => (
                     <li key={chat.id} className="relative">
                       <div className="group flex items-center justify-between rounded-md p-1 text-sm hover:bg-gray-50">
-                        <button className="flex-1 min-w-0 text-left">
+                        <button 
+                          className="flex-1 min-w-0 text-left cursor-pointer"
+                          onClick={() => onChatClick?.(chat)}
+                        >
                           <div className="flex items-center space-x-2">
                             <p className="text-sm text-gray-700 truncate">{chat.title}</p>
                             {chat.confidence && (

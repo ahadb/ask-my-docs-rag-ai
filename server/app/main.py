@@ -1,9 +1,11 @@
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
-from app.routes import upload, query, auth
-from app.routes.settings import router as settings_router
-from app.routes import mock_demo
-from app.middleware.auth import get_current_user
+from app.ingestion.upload_router import router as upload_router
+from app.publishing.query_router import router as query_router
+from app.shared.auth.auth_router import router as auth_router
+from app.shared.auth.settings_router import router as settings_router
+from app.publishing.mock_router import router as mock_demo_router
+from app.shared.auth.jwt_handler import get_current_user
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -38,8 +40,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(auth.router)
-app.include_router(upload.router)
-app.include_router(query.router)
+app.include_router(auth_router)
+app.include_router(upload_router)
+app.include_router(query_router)
 app.include_router(settings_router)
-app.include_router(mock_demo.router)
+app.include_router(mock_demo_router)

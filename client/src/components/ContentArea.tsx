@@ -1,15 +1,12 @@
 import { useState, useEffect } from "react";
-import DocumentLibrary from "./DocumentLibrary";
+import DocumentLibraryPage from "./DocumentLibraryPage";
 import DashboardTabs from "./DashboardTabs";
-import Upload from "./Upload";
-import Chat from "./Chat";
+import UploadPage from "./UploadPage";
+import ChatPage from "./ChatPage";
+import { useApp } from "../contexts/AppContext";
 
-interface ContentAreaProps {
-  recentChats: Array<{ id: string; title: string; confidence?: 'high' | 'medium' | 'low' }>;
-  setRecentChats: React.Dispatch<React.SetStateAction<Array<{ id: string; title: string; confidence?: 'high' | 'medium' | 'low' }>>>;
-}
-
-export default function ContentArea({ recentChats, setRecentChats }: ContentAreaProps) {
+export default function ContentArea() {
+  const { recentChats, setRecentChats, selectedChat, setSelectedChat } = useApp();
   const [documentRefreshTrigger, setDocumentRefreshTrigger] = useState(0);
   const [queryCount, setQueryCount] = useState(0);
   const [responseTimes, setResponseTimes] = useState<number[]>([]);
@@ -31,9 +28,6 @@ export default function ContentArea({ recentChats, setRecentChats }: ContentArea
       isStreaming?: boolean;
     }>
   >([]);
-  const [inputValue, setInputValue] = useState("");
-  const [isQuerying, setIsQuerying] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // Set up initial assistant message
   useEffect(() => {
@@ -60,6 +54,16 @@ export default function ContentArea({ recentChats, setRecentChats }: ContentArea
     low: Math.round((confidenceLevels.low / totalConfidence) * 100)
   } : { high: 0, medium: 0, low: 0 };
 
+  // Clear selected chat after it's been used
+  useEffect(() => {
+    if (selectedChat) {
+      const timer = setTimeout(() => {
+        setSelectedChat(null);
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [selectedChat, setSelectedChat]);
+
 
 
 
@@ -69,7 +73,7 @@ export default function ContentArea({ recentChats, setRecentChats }: ContentArea
       <DashboardTabs
         children={{
           upload: (
-            <Upload 
+            <UploadPage 
               onUploadComplete={() => setDocumentRefreshTrigger(prev => prev + 1)}
               documentRefreshTrigger={documentRefreshTrigger}
               queryCount={queryCount}
@@ -78,10 +82,10 @@ export default function ContentArea({ recentChats, setRecentChats }: ContentArea
             />
           ),
           library: (
-            <DocumentLibrary />
+            <DocumentLibraryPage />
           ),
           chat: (
-            <Chat 
+            <ChatPage 
               recentChats={recentChats} 
               setRecentChats={setRecentChats} 
               onQuerySent={() => setQueryCount(prev => prev + 1)}
@@ -90,14 +94,7 @@ export default function ContentArea({ recentChats, setRecentChats }: ContentArea
                 ...prev,
                 [level]: prev[level] + 1
               }))}
-              messages={messages}
-              setMessages={setMessages}
-              inputValue={inputValue}
-              setInputValue={setInputValue}
-              isQuerying={isQuerying}
-              setIsQuerying={setIsQuerying}
-              isMobileMenuOpen={isMobileMenuOpen}
-              setIsMobileMenuOpen={setIsMobileMenuOpen}
+              recentChat={selectedChat || undefined}
             />
           ),
         }}

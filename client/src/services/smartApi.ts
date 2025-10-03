@@ -1,5 +1,5 @@
-// Mock API Service
-// Simulates real API calls for demo purposes
+// Smart API Service
+// Intelligently routes API calls to mock or real endpoints based on configuration
 
 import { DEMO_CONFIG } from '../config';
 import { getMockResponse, simulateApiDelay } from './mockResponses';

@@ -154,20 +154,24 @@ const DemoPage: React.FC = () => {
                     </div>
                     <p className="text-gray-600 text-sm mb-4">What you're experiencing now</p>
                     <ul className="space-y-2 text-sm text-gray-700">
-                      <li>• Real LLM AI responses</li>
-                      <li>• Document upload & processing</li>
-                      <li>• RAG, Natural language queries</li>
-                      <li>• Source citations & confidence</li>
+                      <li>• Real-time AI streaming</li>
+                      <li>• Multi-document semantic search</li>
+                      <li>• Quick templates with real LLM responses</li>
+                      <li>• Context-aware question answering</li>
+                      <li>• Source citations with confidence scoring</li>
+                      <li>• Supabase cloud database with pgvector</li>
+                      <li>• Full stack RAG with modern React UI and Python backend</li>
                     </ul>
                   </div>
 
                   {/* Phase 2 - Production Ready */}
                   <div className="bg-white rounded-lg p-6 shadow-sm" style={{ border: '1px solid #D9664A' }}>
                     <div className="mb-4">
-                      <h3 className="text-lg font-semibold text-gray-900">Phase 2: Production</h3>
+                      <h3 className="text-lg font-semibold text-gray-900">Phase 2: Full Production Version</h3>
                     </div>
                     <p className="text-gray-600 text-sm mb-4">When you implement</p>
                     <ul className="space-y-2 text-sm text-gray-700">
+                      <li>• Intelligent response caching</li>
                       <li>• Connect your own documents</li>
                       <li>• Custom AI models & prompts</li>
                       <li>• Tool integration (Airtable, Google Workspace)</li>
