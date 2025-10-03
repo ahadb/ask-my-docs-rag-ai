@@ -132,9 +132,9 @@ export default function SignInPage({ onLogin, isAuthenticated }: SignInProps) {
       </div>
 
       {/* Main Content */}
-      <div className="flex min-h-[calc(100vh-64px)] items-start justify-center px-4 sm:px-6 lg:px-8 pt-48">
+      <div className="flex min-h-[calc(100vh-64px)] items-start justify-center px-4 sm:px-6 lg:px-8 pt-8 sm:pt-48">
         <div className="max-w-6xl w-full">
-          <div className="flex items-stretch justify-center space-x-8">
+          <div className="flex flex-col lg:flex-row items-stretch justify-center space-y-8 lg:space-y-0 lg:space-x-8">
             {/* Sign In Form */}
             <div className="flex-1 max-w-md flex flex-col">
             {/* Back to Home Link */}
@@ -304,8 +304,8 @@ export default function SignInPage({ onLogin, isAuthenticated }: SignInProps) {
             </div>
 
             {/* Right Box - Promotional Banner */}
-            <div className="hidden lg:block flex-1 max-w-md flex flex-col">
-              <div className="bg-gradient-to-br from-[#D9664A] via-[#C55A42] to-[#B85450] rounded-lg p-8 text-left text-white flex-1 flex flex-col justify-center mt-14 min-h-[400px] relative overflow-hidden">
+            <div className="flex-1 max-w-md flex flex-col">
+              <div className="bg-gradient-to-br from-[#D9664A] via-[#C55A42] to-[#B85450] rounded-lg p-6 sm:p-8 text-left text-white flex-1 flex flex-col justify-center mt-0 sm:mt-14 min-h-[300px] sm:min-h-[400px] relative overflow-hidden">
                 {/* Background Pattern - Simple Grid */}
                 <div className="absolute inset-0 -z-10 opacity-30">
                   <div className="absolute inset-0" style={{
@@ -336,20 +336,32 @@ export default function SignInPage({ onLogin, isAuthenticated }: SignInProps) {
                   Transform any document into an intelligent AI assistant. Upload PDFs and ask questions in plain English.
                 </p>
                 
-                <div className="mt-8 p-6 backdrop-blur-sm rounded-xl border-1 border-white shadow-lg">
-                  <h3 className="text-xl font-bold mb-4 text-white">Demo Credentials</h3>
-                  <p className="text-base mb-4 font-medium text-white">Try it out with these credentials:</p>
-                  <div className="space-y-2 text-base">
-                    <p className="flex items-center">
-                      <strong className="text-white">Email:</strong> 
-                      <span className="ml-2 text-white font-mono bg-black/20 px-2 py-1 rounded">addybokhari@gmail.com</span>
-                    </p>
-                    <p className="flex items-center">
-                      <strong className="text-white">Password:</strong> 
-                      <span className="ml-2 text-white font-mono bg-black/20 px-2 py-1 rounded">demo!_user#</span>
-                    </p>
+                <div className="mt-6 sm:mt-8 p-4 sm:p-6 backdrop-blur-sm rounded-xl border-1 border-white shadow-lg">
+                  <h3 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4 text-white">Demo Credentials</h3>
+                  <p className="text-sm sm:text-base mb-3 sm:mb-4 font-medium text-white">Try it out with these credentials:</p>
+                  <div className="space-y-3 sm:space-y-2">
+                    <div className="flex flex-col sm:flex-row sm:items-center space-y-1 sm:space-y-0">
+                      <strong className="text-white text-sm sm:text-base min-w-0 sm:min-w-[60px]">Email:</strong> 
+                      <span className="text-white font-mono bg-black/20 px-2 py-1 rounded text-sm sm:text-base break-all sm:break-normal">addybokhari@gmail.com</span>
+                    </div>
+                    <div className="flex flex-col sm:flex-row sm:items-center space-y-1 sm:space-y-0">
+                      <strong className="text-white text-sm sm:text-base min-w-0 sm:min-w-[80px]">Password:</strong> 
+                      <span className="text-white font-mono bg-black/20 px-2 py-1 rounded text-sm sm:text-base break-all sm:break-normal">demo!_user#</span>
+                    </div>
                   </div>
-                  <p className="text-sm mt-4 text-white/80 bg-black/10 px-3 py-2 rounded-lg">This demo includes sample projects and data.</p>
+                  <p className="text-xs sm:text-sm mt-3 sm:mt-4 text-white/80 bg-black/10 px-2 sm:px-3 py-2 rounded-lg">This demo includes sample projects and data.</p>
+                  
+                  {/* Use Demo Credentials Button */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setUsername("addybokhari@gmail.com");
+                      setPassword("demo!_user#");
+                    }}
+                    className="mt-4 w-full bg-white/20 hover:bg-white/30 text-white font-medium py-2 px-4 rounded-lg transition-all duration-200 border border-white/30 hover:border-white/50"
+                  >
+                    Use Demo Credentials
+                  </button>
                 </div>
               </div>
             </div>

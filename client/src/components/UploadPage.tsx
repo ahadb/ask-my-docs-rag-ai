@@ -187,22 +187,16 @@ export default function UploadPage({ onUploadComplete, documentRefreshTrigger, q
         {activeTab === 'upload' && (
           <>
             <div className="w-full max-w-2xl mb-6 mt-2">
-              <div 
-                className="backdrop-blur-sm border-2 border-dashed rounded-lg p-8 text-center transition-colors border-gray-300 bg-gray-50 opacity-60"
-                style={{ 
-                  backgroundImage: 'repeating-linear-gradient(45deg, #e9e7e3, #e9e7e3 8px, rgba(233, 231, 227, 0.3) 8px, rgba(233, 231, 227, 0.3) 16px)',
-                  backgroundColor: '#f5f4f2'
-                }}
-              >
+            <div 
+              className="backdrop-blur-sm border-2 border-dashed rounded-lg p-8 text-center transition-colors border-gray-300 bg-gray-50 opacity-90"
+              style={{ 
+                backgroundImage: 'repeating-linear-gradient(45deg, #e9e7e3, #e9e7e3 8px, rgba(233, 231, 227, 0.3) 8px, rgba(233, 231, 227, 0.3) 16px)',
+                backgroundColor: '#f5f4f2'
+              }}
+            >
                 <CloudArrowUpIcon className="mx-auto h-12 w-12 mb-4" style={{ color: '#D9664A' }} />
                 <div className="space-y-2">
                   <p className="text-lg font-medium text-gray-500">Upload Disabled (Demo Mode)</p>
-                  <p className="text-sm text-gray-500">
-                    File upload is disabled for this demo
-                  </p>
-                  <p className="text-xs text-gray-400">
-                    Upload functionality will be enabled in the full version
-                  </p>
                 </div>
                 <div className="mt-6 flex items-center justify-center space-x-4">
                   <input
@@ -223,7 +217,7 @@ export default function UploadPage({ onUploadComplete, documentRefreshTrigger, q
                     }}
                   >
                     <CloudArrowUpIcon className="h-4 w-4" />
-                    <span>Upload Disabled (Demo)</span>
+                    <span>Upload</span>
                   </button>
                   {fileUpload.uploadedFiles.length > 0 && (
                     <button

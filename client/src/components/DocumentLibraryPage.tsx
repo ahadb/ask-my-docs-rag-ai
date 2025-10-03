@@ -244,39 +244,30 @@ export default function DocumentLibraryPage() {
     <div className="flex w-full h-full">
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Header Section */}
-        <div className="border-b border-gray-200 px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">Document Library ({documents.length})</h1>
+        <div className="border-b border-gray-200 px-4 sm:px-6 py-4">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
+            <div className="flex-1">
+              <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Document Library ({documents.length})</h1>
               <p className="text-sm text-gray-600 mt-1">
                 Manage and organize your uploaded documents. View processing status, search content, and start conversations.
               </p>
               
               {/* Notification Badge */}
               <div className="mt-4 p-3 rounded-lg border" style={{ backgroundColor: '#fefce8', borderColor: '#fde047' }}>
-                <div className="flex items-start">
-                  <div className="flex-shrink-0">
-                    <svg className="h-5 w-5" style={{ color: '#ca8a04' }} fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                    </svg>
-                  </div>
-                  <div className="ml-3">
-                    <p className="text-sm font-medium" style={{ color: '#713f12' }}>
-                      Download sample docs to get a tangible idea of pre-loaded documents. Some features are disabled on this tab
-                    </p>
-                  </div>
-                </div>
+                <p className="text-sm font-medium" style={{ color: '#713f12' }}>
+                  Download sample docs to get a tangible idea of pre-loaded documents. Some features are disabled on this tab
+                </p>
               </div>
             </div>
-            <div className="flex items-center space-x-3">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center space-y-2 sm:space-y-0 sm:space-x-3">
               <button
                 onClick={handleUploadClick}
                 disabled
-                className="flex items-center space-x-2 px-4 py-2 text-sm font-medium rounded-md transition-colors opacity-50 cursor-not-allowed"
+                className="flex items-center justify-center space-x-2 px-3 sm:px-4 py-2 text-sm font-medium rounded-md transition-colors opacity-50 cursor-not-allowed w-full sm:w-auto"
                 style={{
                   backgroundColor: '#e9e7e3',
-                  color: '#D9664A',
-                  border: '1px solid #D9664A'
+                  color: '#6B7280',
+                  border: '1px solid #D1D5DB'
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.backgroundColor = '#e9e7e3';
@@ -286,12 +277,13 @@ export default function DocumentLibraryPage() {
                 }}
               >
                 <CloudArrowUpIcon className="h-4 w-4" />
-                <span>Upload Document</span>
+                <span className="hidden sm:inline">Upload Document</span>
+                <span className="sm:hidden">Upload</span>
               </button>
               
               <button
                 onClick={handleDownloadAll}
-                className="flex items-center space-x-2 px-4 py-2 text-sm font-medium rounded-md transition-colors"
+                className="flex items-center justify-center space-x-2 px-3 sm:px-4 py-2 text-sm font-medium rounded-md transition-colors w-full sm:w-auto"
                 style={{
                   backgroundColor: '#e9e7e3',
                   color: '#D9664A',
@@ -305,34 +297,35 @@ export default function DocumentLibraryPage() {
                 }}
               >
                 <ArrowDownTrayIcon className="h-4 w-4" />
-                <span>Download Sample Docs</span>
+                <span className="hidden sm:inline">Download Sample Docs</span>
+                <span className="sm:hidden">Download</span>
               </button>
             </div>
           </div>
         </div>
 
         {/* Controls Section */}
-        <div className="border-b border-gray-200 px-6 py-4">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="border-b border-gray-200 px-4 sm:px-6 py-4">
+          <div className="flex flex-col space-y-4">
             {/* Search and Filter */}
-            <div className="flex flex-col sm:flex-row gap-4 flex-1">
-              <div className="relative flex-1 max-w-md">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+              <div className="relative flex-1">
                 <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <input
                   type="text"
                   placeholder="Search documents..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 w-full"
+                  className="pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 w-full text-sm sm:text-base"
                 />
               </div>
               
-              <div className="relative">
+              <div className="relative sm:w-48">
                 <FunnelIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <select
                   value={filterStatus}
                   onChange={(e) => setFilterStatus(e.target.value)}
-                  className="pl-10 pr-8 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 appearance-none bg-white"
+                  className="pl-10 pr-8 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 appearance-none bg-white w-full text-sm sm:text-base"
                 >
                   <option value="all">All Documents</option>
                   <option value="ready">Ready</option>
@@ -385,7 +378,7 @@ export default function DocumentLibraryPage() {
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead style={{ backgroundColor: '#e9e7e3' }}>
                     <tr>
-                      <th scope="col" className="px-6 py-3 text-left">
+                      <th scope="col" className="px-3 sm:px-6 py-3 text-left">
                         <input
                           type="checkbox"
                           checked={selectedDocuments.length === filteredDocuments.length && filteredDocuments.length > 0}
@@ -393,43 +386,44 @@ export default function DocumentLibraryPage() {
                           className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
                         />
                       </th>
-                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th scope="col" className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         <div className="flex items-center">
-                          Document
+                          <span className="hidden sm:inline">Document</span>
+                          <span className="sm:hidden">Doc</span>
                           <ChevronUpDownIcon className="ml-1 h-4 w-4" />
                         </div>
                       </th>
-                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th scope="col" className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         <div className="flex items-center">
                           Status
                           <ChevronUpDownIcon className="ml-1 h-4 w-4" />
                         </div>
                       </th>
-                      <th scope="col" className="px-3 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th scope="col" className="px-3 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">
                         <div className="flex items-center justify-end">
                           Size
                           <ChevronUpDownIcon className="ml-1 h-4 w-4" />
                         </div>
                       </th>
-                      <th scope="col" className="px-3 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th scope="col" className="px-3 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">
                         <div className="flex items-center justify-end">
                           Chunks
                           <ChevronUpDownIcon className="ml-1 h-4 w-4" />
                         </div>
                       </th>
-                      <th scope="col" className="px-3 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th scope="col" className="px-3 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">
                         <div className="flex items-center justify-end">
                           Words
                           <ChevronUpDownIcon className="ml-1 h-4 w-4" />
                         </div>
                       </th>
-                      <th scope="col" className="px-3 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th scope="col" className="px-3 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">
                         <div className="flex items-center justify-end">
                           Upload Date
                           <ChevronUpDownIcon className="ml-1 h-4 w-4" />
                         </div>
                       </th>
-                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th scope="col" className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Actions
                       </th>
                     </tr>

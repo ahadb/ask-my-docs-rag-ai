@@ -54,7 +54,7 @@ export default function ChatPage({
     if (!isOnline) {
       chat.addMessage({
         type: "assistant",
-        content: "⚠️ No internet connection detected. Please check your connection and try again.",
+        content: "No internet connection detected. Please check your connection and try again.",
       });
       return;
     }

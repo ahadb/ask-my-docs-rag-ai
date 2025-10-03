@@ -136,18 +136,30 @@ export default function Sidebar({
                                 onClick={() => handleNavigation(item.href)}
                                 className={classNames(
                                   isCurrentPage(item.href)
-                                    ? "bg-gray-200 text-indigo-600"
-                                    : "text-gray-700 hover:bg-gray-50 hover:text-indigo-600",
+                                    ? ""
+                                    : "hover:bg-gray-50",
                                   "group flex gap-x-3 rounded-md p-2 text-sm font-semibold w-full text-left cursor-pointer"
                                 )}
+                                style={{
+                                  backgroundColor: isCurrentPage(item.href) ? '#e9e7e3' : 'transparent',
+                                  color: isCurrentPage(item.href) ? '#D9664A' : '#4A4A4A'
+                                }}
+                                onMouseEnter={(e) => {
+                                  if (!isCurrentPage(item.href)) {
+                                    e.currentTarget.style.color = '#D9664A';
+                                  }
+                                }}
+                                onMouseLeave={(e) => {
+                                  if (!isCurrentPage(item.href)) {
+                                    e.currentTarget.style.color = '#4A4A4A';
+                                  }
+                                }}
                               >
                                 <item.icon
-                                  className={classNames(
-                                    isCurrentPage(item.href)
-                                      ? "text-indigo-600"
-                                      : "text-gray-400 group-hover:text-indigo-600",
-                                    "h-6 w-5 shrink-0"
-                                  )}
+                                  className="h-6 w-5 shrink-0"
+                                  style={{
+                                    color: isCurrentPage(item.href) ? '#D9664A' : '#4A4A4A'
+                                  }}
                                   aria-hidden="true"
                                 />
                                 {item.name}

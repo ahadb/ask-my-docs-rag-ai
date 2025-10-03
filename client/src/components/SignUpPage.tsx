@@ -6,7 +6,6 @@ import {
   ArrowLeftIcon,
   EyeIcon,
   EyeSlashIcon,
-  InformationCircleIcon,
   ChevronDownIcon,
 } from "@heroicons/react/24/outline";
 
@@ -176,9 +175,8 @@ export default function SignUpPage({ onLogin, isAuthenticated }: SignUpProps) {
             {/* Sign Up Form Container */}
             <div className="bg-white border border-gray-300 rounded-lg p-8 flex-1">
               <div className="mb-6">
-                <h1 className="text-2xl font-bold text-gray-900 flex items-center">
-                  Create account <span className="text-xl text-gray-500 font-normal">(Disabled for Demo)</span>
-                  <InformationCircleIcon className="ml-2 h-5 w-5" style={{ color: '#D9664A' }} />
+                <h1 className="text-2xl font-bold text-gray-900">
+                  Create account
                 </h1>
                 <p className="text-sm text-gray-600 mt-2">
                   Join our AI-powered document assistant platform
@@ -351,7 +349,7 @@ export default function SignUpPage({ onLogin, isAuthenticated }: SignUpProps) {
                       border: '1px solid #D9664A' 
                     }}
                   >
-                    Create account (Demo)
+                    Create account
                   </button>
                 </div>
 
