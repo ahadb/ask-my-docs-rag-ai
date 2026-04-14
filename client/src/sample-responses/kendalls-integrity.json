@@ -1,0 +1,26 @@
+{
+    "question": "Describe Kendall's correlations for perceived leader integrity",
+    "answer": "Kendall's correlations for perceived leader integrity are described in matrix forms across different employee attitudes towards diversity and varying levels of perceived ethical leadership, including High Ethical, Moderate Ethical, and Low Ethical instances.\n\nIn Table 4, the correlation results are as follows:\n\n| Attitude Toward Diversity | Perceived Leader Integrity | Kendall's τ (tau) | No. of Participants | p |\n|---------------------------|----------------------------|-------------------|---------------------|---|\n| Optimistic                | High Ethical               | -.10**            | 422                 | < .01 |\n|                           | Moderate Ethical           | .00               | 70                  | N/A |\n|                           | Low                        | -.12              | 15                  | N/A |\n| Realist                   | High Ethical               | -.02              | 188                 | N/A |\n|                           | Moderate Ethical           | -.04              | 185                 | N/A |\n|                           | Low                        | .03               | 13                  | N/A |\n| Pessimist                 | High Ethical               | -.26*             | 32                  | < .05 |\n|                           | Moderate Ethical           | .08               | 13                  | N/A |\n|                           | Low                        | -.99              | 3                   | N/A |\n\nIn Table 5, the correlation data was measured against five diversity dimensions: Emotional Reactions, Judgments, Behavioral Reactions, Personal Consequences, and Organizational Outcomes. A sample of the correlations is as follows:\n\n| Perceived Leader Integrity | No. of Participants | Emotional Reactions τ | Judgments τ | Behavioral Reactions τ | Personal Consequences τ | Organizational Outcomes τ |\n|----------------------------|---------------------|-----------------------|-------------|------------------------|-------------------------|---------------------------|\n| High Ethical               | 642                 | -.16**                | -.16**      | -.12**                 | -.17**                  | -.15**                    |\n| Moderate Ethical           | 268                 | .00                   | -.05        | -.08                   | -.06                    | .01                       |\n| Low                        | 31                  | -.17                  | -.12        | -.12                   | -.13                    | -.06                      |\n\n(** = p < .01)",
+    "confidence": {
+        "level": "High",
+        "explanation": "Information taken directly from provided tables"
+    },
+    "sources": [
+        {
+            "file_name": "Kendall's Integrity Research Paper.docx",
+            "chunk_index": 0
+        },
+        {
+            "file_name": "Kendall's Integrity Research Paper.docx",
+            "chunk_index": 1
+        },
+        {
+            "file_name": "Kendall's Integrity Research Paper.docx",
+            "chunk_index": 2
+        }
+    ],
+    "source_documents": [
+        "Kendall's Integrity Research Paper.docx"
+    ],
+    "chunks_found": 3
+}

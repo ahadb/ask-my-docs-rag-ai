@@ -52,9 +52,9 @@ export const mockQueryApi = async (question: string): Promise<MockApiResponse> =
 };
 
 /**
- * Enhanced fetch function that can route to mock or real API
+ * Smart fetch function that intelligently routes requests to mock or real API based on configuration
  */
-export const fetchWithMockRouting = async (
+export const fetchWithSmartRouting = async (
   url: string,
   options: RequestInit
 ): Promise<Response> => {

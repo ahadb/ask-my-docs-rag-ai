@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useLocation } from "react-router-dom";
 import { CloudArrowUpIcon, FolderIcon, ChatBubbleLeftRightIcon } from "@heroicons/react/24/outline";
 
 interface DashboardTabsProps {
@@ -12,18 +12,28 @@ interface DashboardTabsProps {
 
 export default function DashboardTabs({ children }: DashboardTabsProps) {
   const [searchParams, setSearchParams] = useSearchParams();
+  const location = useLocation();
   const [activeTab, setActiveTab] = useState<'upload' | 'library' | 'chat'>('upload');
 
-  // Initialize active tab from URL params
+  // Initialize active tab from URL params or pathname
   useEffect(() => {
     const tabParam = searchParams.get('tab');
     if (tabParam && ['upload', 'library', 'chat'].includes(tabParam)) {
       setActiveTab(tabParam as 'upload' | 'library' | 'chat');
     } else {
-      // Default to upload if no valid tab param
-      setActiveTab('upload');
+      // Check pathname for direct routes
+      if (location.pathname === '/chat') {
+        setActiveTab('chat');
+      } else if (location.pathname === '/library') {
+        setActiveTab('library');
+      } else if (location.pathname === '/dashboard') {
+        setActiveTab('upload');
+      } else {
+        // Default to upload if no valid tab param or pathname
+        setActiveTab('upload');
+      }
     }
-  }, [searchParams]);
+  }, [searchParams, location.pathname]);
 
   // Handle tab change and update URL
   const handleTabChange = (tabId: 'upload' | 'library' | 'chat') => {

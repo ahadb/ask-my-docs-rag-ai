@@ -18,6 +18,7 @@ interface SidebarProps {
   setSidebarOpen: (open: boolean) => void;
   onLogout?: () => void;
   recentChats?: Array<{ id: string; title: string; confidence?: 'high' | 'medium' | 'low' }>;
+  onChatClick?: (chat: { id: string; title: string; confidence?: 'high' | 'medium' | 'low' }) => void;
 }
 
 export default function Sidebar({
@@ -25,6 +26,7 @@ export default function Sidebar({
   setSidebarOpen,
   onLogout,
   recentChats = [],
+  onChatClick,
 }: SidebarProps) {
   const navigate = useNavigate();
   const location = useLocation();
@@ -134,18 +136,30 @@ export default function Sidebar({
                                 onClick={() => handleNavigation(item.href)}
                                 className={classNames(
                                   isCurrentPage(item.href)
-                                    ? "bg-gray-200 text-indigo-600"
-                                    : "text-gray-700 hover:bg-gray-50 hover:text-indigo-600",
+                                    ? ""
+                                    : "hover:bg-gray-50",
                                   "group flex gap-x-3 rounded-md p-2 text-sm font-semibold w-full text-left cursor-pointer"
                                 )}
+                                style={{
+                                  backgroundColor: isCurrentPage(item.href) ? '#e9e7e3' : 'transparent',
+                                  color: isCurrentPage(item.href) ? '#D9664A' : '#4A4A4A'
+                                }}
+                                onMouseEnter={(e) => {
+                                  if (!isCurrentPage(item.href)) {
+                                    e.currentTarget.style.color = '#D9664A';
+                                  }
+                                }}
+                                onMouseLeave={(e) => {
+                                  if (!isCurrentPage(item.href)) {
+                                    e.currentTarget.style.color = '#4A4A4A';
+                                  }
+                                }}
                               >
                                 <item.icon
-                                  className={classNames(
-                                    isCurrentPage(item.href)
-                                      ? "text-indigo-600"
-                                      : "text-gray-400 group-hover:text-indigo-600",
-                                    "h-6 w-5 shrink-0"
-                                  )}
+                                  className="h-6 w-5 shrink-0"
+                                  style={{
+                                    color: isCurrentPage(item.href) ? '#D9664A' : '#4A4A4A'
+                                  }}
                                   aria-hidden="true"
                                 />
                                 {item.name}
@@ -229,7 +243,10 @@ export default function Sidebar({
                   {recentChats.map((chat) => (
                     <li key={chat.id} className="relative">
                       <div className="group flex items-center justify-between rounded-md p-1 text-sm hover:bg-gray-50">
-                        <button className="flex-1 min-w-0 text-left">
+                        <button 
+                          className="flex-1 min-w-0 text-left cursor-pointer"
+                          onClick={() => onChatClick?.(chat)}
+                        >
                           <div className="flex items-center space-x-2">
                             <p className="text-sm text-gray-700 truncate">{chat.title}</p>
                             {chat.confidence && (

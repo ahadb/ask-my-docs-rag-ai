@@ -190,7 +190,11 @@ export default function DocumentLibraryCards({ refreshTrigger = 0 }: DocumentLib
                   >
                     <td className="px-3 py-3">
                       <div className="flex items-center min-w-0">
-                        <DocumentTextIcon className="h-4 w-4 text-gray-400 mr-2 flex-shrink-0" />
+                        <img 
+                          src={document.metadata?.file_type === 'DOCX' || document.metadata?.file_type === 'DOC' ? '/doc-ico-sm.png' : '/pdf-icon-sm.png'} 
+                          alt="Document icon" 
+                          className="h-4 w-4 mr-2 flex-shrink-0" 
+                        />
                         <p className="text-sm font-medium text-gray-900 truncate" title={document.filename}>
                           {document.filename}
                         </p>

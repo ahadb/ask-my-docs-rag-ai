@@ -10,9 +10,13 @@ import aiStrategy from '../sample-responses/ai-strategy.json';
 import codeOfConduct from '../sample-responses/code-of-conduct-zenith.json';
 import customerRetention from '../sample-responses/customer-retention.json';
 import docChatApi from '../sample-responses/doc-chat-api-and-auth.json';
+import kendallsIntegrity from '../sample-responses/kendalls-integrity.json';
+import machiavelliRuthless from '../sample-responses/machieavelli-ruthless.json';
 
 // Map template questions to their corresponding mock responses
 const MOCK_RESPONSES_MAP: Record<string, any> = {
+  "What was Machiavelli's legacy, why was he considered ruthless?": machiavelliRuthless,
+  "Describe Kendall's correlations for percieve leader integrity": kendallsIntegrity,
   "What are the revenue targets and growth strategies mentioned across all documents?": revenueTargets,
   "Compare the marketing strategies between The Daily Grind and AquaBirst": compareMarketing,
   "If I'm implementing a new AI system, what best practices should I follow based on these documents?": aiStrategy,
@@ -23,13 +27,16 @@ const MOCK_RESPONSES_MAP: Record<string, any> = {
 
 // Template questions array (must match the Chat component)
 export const TEMPLATE_QUESTIONS = [
+  "What was Machiavelli's legacy, why was he considered ruthless?",
+  "Describe Kendall's correlations for percieve leader integrity",
   "What are the revenue targets and growth strategies mentioned across all documents?",
   "Compare the marketing strategies between The Daily Grind and AquaBirst",
   "If I'm implementing a new AI system, what best practices should I follow based on these documents?",
   "What are the code of conduct and ethics for Zenith Dynamics?",
   "How can I improve customer retention based on the strategies outlined?",
   "What are the API endpoints and authentication methods in the DocChat technical handbook?",
-  "Who are the main competitors mentioned?"
+  "Who are the main competitors mentioned?",
+  
 ];
 
 /**
